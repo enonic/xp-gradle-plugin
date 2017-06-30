@@ -7,6 +7,7 @@ import org.gradle.api.file.CopySpec;
 import org.gradle.api.provider.PropertyState;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.bundling.Jar;
@@ -24,13 +25,13 @@ public class DeployTask
         this.homeDir = getProject().property( File.class );
     }
 
-    @Input
+    @InputFile
     public File getFrom()
     {
         return ( (Jar) getProject().getTasks().getByPath( "jar" ) ).getArchivePath();
     }
 
-    private File getHomeDir()
+    private File resolveHomeDir()
     {
         final File file = this.homeDir.getOrNull();
         return file != null ? file : getProject().getBuildDir();
@@ -39,7 +40,7 @@ public class DeployTask
     @OutputDirectory
     public File getDeployDir()
     {
-        return new File( getHomeDir(), "deploy" );
+        return new File( resolveHomeDir(), "deploy" );
     }
 
     public void setHomeDir( final Provider<File> dir )

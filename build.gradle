@@ -1,5 +1,8 @@
-apply plugin: 'java-gradle-plugin'
-apply plugin: 'groovy'
+plugins {
+    id 'groovy'
+    id 'java-gradle-plugin'
+    id 'com.gradle.plugin-publish' version '0.9.7'
+}
 
 repositories {
     jcenter()
@@ -11,4 +14,35 @@ dependencies {
     compile 'com.google.guava:guava:22.0'
     compile 'org.dm.gradle:gradle-bundle-plugin:0.10.0'
     compile 'org.osgi:osgi.core:6.0.0'
+}
+
+pluginBundle {
+    website = 'https://enonic.com'
+    vcsUrl = 'git@github.com:enonic/xp-gradle-plugin.git'
+    plugins {
+        base_plugin {
+            id = 'com.enonic.xp.base'
+            displayName = 'Enonic XP Base Plugin'
+            description = 'Base plugin for Enonic XP development.'
+            tags = ['enonic', 'java', 'javascript', 'xp']
+        }
+        app_plugin {
+            id = 'com.enonic.xp.app'
+            displayName = 'Enonic XP App Plugin'
+            description = 'Plugin for Enonic XP application development.'
+            tags = ['enonic', 'java', 'javascript', 'xp']
+        }
+        doc_plugin {
+            id = 'com.enonic.xp.doc'
+            displayName = 'Enonic XP Doc Plugin'
+            description = 'Plugin for Enonic XP documentation building.'
+            tags = ['enonic', 'java', 'javascript', 'xp']
+        }
+        run_plugin {
+            id = 'com.enonic.xp.run'
+            displayName = 'Enonic XP Run Plugin'
+            description = 'Plugin for Enonic XP running server and apps.'
+            tags = ['enonic', 'java', 'javascript', 'xp']
+        }
+    }
 }

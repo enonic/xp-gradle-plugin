@@ -1,5 +1,6 @@
 # XP Gradle Plugin
 
+
 * Add enonic repository as a method (enonicRepo()).
 * If docs folder exists -> add doc tasks.
 * 'com.enonic.xp.app' for apps.

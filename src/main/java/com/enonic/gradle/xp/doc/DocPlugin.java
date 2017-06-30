@@ -1,14 +1,32 @@
 package com.enonic.gradle.xp.doc;
 
-public final class DocPlugin
-    // extends BasePlugin
+import java.io.File;
+import java.util.Map;
+
+import org.asciidoctor.gradle.AsciidoctorPlugin;
+import org.asciidoctor.gradle.AsciidoctorTask;
+import org.gradle.api.Plugin;
+import org.gradle.api.Project;
+import org.gradle.api.Task;
+import org.gradle.api.tasks.bundling.Zip;
+
+import com.google.common.collect.Maps;
+
+import com.enonic.gradle.xp.BasePlugin;
+
+public class DocPlugin
+    implements Plugin<Project>
 {
-    /*
     private final static String ASCIIDOCTOR_TASK = "asciidoctor";
 
+    private Project project;
+
     @Override
-    protected void configure()
+    public void apply( final Project project )
     {
+        this.project = project;
+
+        this.project.getPlugins().apply( BasePlugin.class );
         this.project.getPlugins().apply( AsciidoctorPlugin.class );
 
         configureAsciidoctor();
@@ -18,27 +36,23 @@ public final class DocPlugin
 
     private void createDocTask()
     {
-        this.project.getTasks().create( "doc", task ->
-        {
-            task.setGroup( "xp" );
-            task.setDescription( "Generates documentation based on Asciidoctor (alias for " + ASCIIDOCTOR_TASK + ")." );
-            task.dependsOn( ASCIIDOCTOR_TASK );
-        } );
+        final Task task = this.project.getTasks().create( "doc" );
+        task.setGroup( "Documentation" );
+        task.setDescription( "Generates documentation based on Asciidoctor (alias for " + ASCIIDOCTOR_TASK + ")." );
+        task.dependsOn( ASCIIDOCTOR_TASK );
     }
 
     private void createDocZipTask()
     {
-        final Zip zipTask = this.project.getTasks().create( "docZip", Zip.class, task ->
-        {
-            task.setGroup( "xp" );
-            task.setDescription( "Zips up the documentation." );
-            task.dependsOn( "doc" );
+        final Zip task = this.project.getTasks().create( "docZip", Zip.class );
+        task.setGroup( "Documentation" );
+        task.setDescription( "Zips up the documentation." );
+        task.dependsOn( "doc" );
 
-            task.setClassifier( "doc" );
-            task.from( new File( this.project.getBuildDir(), "html5" ) );
-        } );
+        task.setClassifier( "doc" );
+        task.from( new File( this.project.getBuildDir(), "html5" ) );
 
-        this.project.getArtifacts().add( "archives", zipTask );
+        this.project.getArtifacts().add( "archives", task );
     }
 
     private void configureAsciidoctor()
@@ -63,5 +77,4 @@ public final class DocPlugin
 
         task.setAttributes( attributes );
     }
-    */
 }
