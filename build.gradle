@@ -1,0 +1,14 @@
+apply plugin: 'java-gradle-plugin'
+apply plugin: 'groovy'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile gradleApi()
+    compile 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.3'
+    compile 'com.google.guava:guava:22.0'
+    compile 'org.dm.gradle:gradle-bundle-plugin:0.10.0'
+    compile 'org.osgi:osgi.core:6.0.0'
+}
