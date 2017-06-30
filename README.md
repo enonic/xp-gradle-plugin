@@ -1,12 +1,4 @@
 # XP Gradle Plugin
 
-
-* Add enonic repository as a method (enonicRepo()).
-* If docs folder exists -> add doc tasks.
-* 'com.enonic.xp.app' for apps.
-* 'com.enonic.xp.lib' for libs.
-* Add a blacklist.txt file for all artifacts that should not be bundled (All com.enonic.xp except lib-*).
-
-
-* Run to start XP
-* Provisioning of XP apps
+[![Build Status](https://travis-ci.org/enonic/xp-gradle-plugin.svg?branch=master)](https://travis-ci.org/enonic/xp-gradle-plugin)
+[![License](https://img.shields.io/github/license/enonic/xp-gradle-plugin.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
