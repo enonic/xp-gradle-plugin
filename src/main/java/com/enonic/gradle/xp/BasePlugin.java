@@ -27,8 +27,6 @@ public final class BasePlugin
         this.ext.setInstallDir( new File( this.project.getBuildDir(), "xp" ) );
         this.ext.setHomeDir( findHomeDir( this.ext.getInstallDir(), this.project.findProperty( "xpHome" ) ) );
         this.ext.setRepoUrl( PUBLIC_REPO );
-
-        this.project.getRepositories().maven( repo -> repo.setUrl( PUBLIC_REPO ) );
         this.project.getPlugins().withType( MavenPlugin.class, this::configureMavenPlugin );
     }
 
