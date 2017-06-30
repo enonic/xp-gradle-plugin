@@ -4,9 +4,10 @@ import java.io.File;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
 import org.gradle.api.plugins.MavenPlugin;
 import org.gradle.api.tasks.Upload;
+
+import com.enonic.gradle.xp.repo.RepoHelper;
 
 public final class BasePlugin
     implements Plugin<Project>
@@ -15,18 +16,16 @@ public final class BasePlugin
 
     private Project project;
 
-    private XpExtension ext;
-
     @Override
     public void apply( final Project project )
     {
         this.project = project;
 
-        this.ext = XpExtension.create( this.project );
-        this.ext.setVersion( "6.+" );
-        this.ext.setInstallDir( new File( this.project.getBuildDir(), "xp" ) );
-        this.ext.setHomeDir( findHomeDir( this.ext.getInstallDir(), this.project.findProperty( "xpHome" ) ) );
-        this.ext.setRepoUrl( PUBLIC_REPO );
+        final XpExtension ext = XpExtension.create( this.project );
+        ext.setVersion( "6.+" );
+        ext.setInstallDir( new File( this.project.getBuildDir(), "xp" ) );
+        ext.setHomeDir( findHomeDir( ext.getInstallDir(), this.project.findProperty( "xpHome" ) ) );
+        ext.setRepoUrl( PUBLIC_REPO );
         this.project.getPlugins().withType( MavenPlugin.class, this::configureMavenPlugin );
     }
 
@@ -59,13 +58,7 @@ public final class BasePlugin
 
     private void configureUploadTask( final Upload task )
     {
-        task.getRepositories().maven( this::configureUploadRepo );
-    }
-
-    private void configureUploadRepo( final MavenArtifactRepository repo )
-    {
-        repo.setUrl( this.ext.getRepoUrl() );
-        repo.getCredentials().setUsername( this.ext.getRepoUser() );
-        repo.getCredentials().setPassword( this.ext.getRepoPassword() );
+        final RepoHelper helper = new RepoHelper( this.project );
+        helper.addMavenDeployer( task.getRepositories() );
     }
 }
