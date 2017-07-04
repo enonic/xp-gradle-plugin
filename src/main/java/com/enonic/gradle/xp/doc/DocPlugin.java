@@ -8,7 +8,6 @@ import org.asciidoctor.gradle.AsciidoctorTask;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
-import org.gradle.api.tasks.bundling.Zip;
 
 import com.google.common.collect.Maps;
 
@@ -31,7 +30,6 @@ public class DocPlugin
 
         configureAsciidoctor();
         createDocTask();
-        createDocZipTask();
     }
 
     private void createDocTask()
@@ -42,25 +40,12 @@ public class DocPlugin
         task.dependsOn( ASCIIDOCTOR_TASK );
     }
 
-    private void createDocZipTask()
-    {
-        final Zip task = this.project.getTasks().create( "docZip", Zip.class );
-        task.setGroup( "Documentation" );
-        task.setDescription( "Zips up the documentation." );
-        task.dependsOn( "doc" );
-
-        task.setClassifier( "doc" );
-        task.from( new File( this.project.getBuildDir(), "html5" ) );
-
-        this.project.getArtifacts().add( "archives", task );
-    }
-
     private void configureAsciidoctor()
     {
         final AsciidoctorTask task = (AsciidoctorTask) this.project.getTasks().getByName( ASCIIDOCTOR_TASK );
         task.setSourceDir( new File( this.project.getProjectDir(), "docs" ) );
-        task.setOutputDir( this.project.getBuildDir() );
         task.setBackends( "html5" );
+        task.setOutputDir( this.project.getBuildDir() );
 
         final Map<String, Object> attributes = Maps.newHashMap();
         attributes.put( "icons", "font" );

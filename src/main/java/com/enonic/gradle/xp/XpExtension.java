@@ -17,20 +17,12 @@ public class XpExtension
 
     private final PropertyState<File> installDir;
 
-    private String repoUrl;
-
-    private String repoUser;
-
-    private String repoPassword;
-
     public XpExtension( final Project project )
     {
         this.project = project;
         this.version = this.project.property( String.class );
         this.homeDir = this.project.property( File.class );
         this.installDir = this.project.property( File.class );
-        this.repoUser = findProperty("repoUser");
-        this.repoPassword = findProperty("repoPassword");
     }
 
     private String findProperty( final String name )
@@ -82,36 +74,6 @@ public class XpExtension
     public void setInstallDir( final File dir )
     {
         this.installDir.set( dir );
-    }
-
-    public String getRepoUrl()
-    {
-        return this.repoUrl;
-    }
-
-    public void setRepoUrl( final String url )
-    {
-        this.repoUrl = url;
-    }
-
-    public String getRepoUser()
-    {
-        return this.repoUser;
-    }
-
-    public void setRepoUser( final String repoUser )
-    {
-        this.repoUser = repoUser;
-    }
-
-    public String getRepoPassword()
-    {
-        return this.repoPassword;
-    }
-
-    public void setRepoPassword( final String repoPassword )
-    {
-        this.repoPassword = repoPassword;
     }
 
     public static XpExtension get( final Project project )
