@@ -14,38 +14,64 @@ import com.google.common.collect.Maps;
 import com.enonic.gradle.xp.BasePlugin;
 
 public class DocPlugin
-    implements Plugin<Project>
+    implements Plugin<Project>, DocConstants
 {
-    private final static String ASCIIDOCTOR_TASK = "asciidoctor";
-
     private Project project;
+
+    private DocExtension ext;
 
     @Override
     public void apply( final Project project )
     {
         this.project = project;
+        this.ext = DocExtension.create( this.project );
 
         this.project.getPlugins().apply( BasePlugin.class );
         this.project.getPlugins().apply( AsciidoctorPlugin.class );
 
+        createBuildDocTask();
+        createPublishDocTask();
         configureAsciidoctor();
-        createDocTask();
     }
 
-    private void createDocTask()
+    private void createBuildDocTask()
     {
-        final Task task = this.project.getTasks().create( "doc" );
-        task.setGroup( "Documentation" );
-        task.setDescription( "Generates documentation based on Asciidoctor (alias for " + ASCIIDOCTOR_TASK + ")." );
+        final Task task = this.project.getTasks().create( "buildDoc" );
+        task.setGroup( GROUP );
+        task.setDescription( "Build documentation based on Asciidoctor (alias for " + ASCIIDOCTOR_TASK + ")." );
         task.dependsOn( ASCIIDOCTOR_TASK );
+    }
+
+    private void createPublishDocTask()
+    {
+        final PublishDocTask task = this.project.getTasks().create( "publishDoc", PublishDocTask.class );
+        task.setGroup( GROUP );
+        task.setDescription( "Publish documentation to S3." );
+        task.dependsOn( ASCIIDOCTOR_TASK );
+        task.setSourceDir( new File( getDocsOutputDir(), "html5" ) );
+
+        this.project.afterEvaluate( project -> task.setEnabled( isS3Enabled() ) );
+    }
+
+    private boolean isS3Enabled()
+    {
+        final S3Settings settings = this.ext.getS3();
+        return settings != null && settings.getBucketName() != null;
+    }
+
+    private File getDocsOutputDir()
+    {
+        return new File( this.project.getBuildDir(), "docs" );
     }
 
     private void configureAsciidoctor()
     {
         final AsciidoctorTask task = (AsciidoctorTask) this.project.getTasks().getByName( ASCIIDOCTOR_TASK );
+        task.setGroup( GROUP );
+
         task.setSourceDir( new File( this.project.getProjectDir(), "docs" ) );
+        task.setOutputDir( getDocsOutputDir() );
         task.setBackends( "html5" );
-        task.setOutputDir( this.project.getBuildDir() );
 
         final Map<String, Object> attributes = Maps.newHashMap();
         attributes.put( "icons", "font" );
@@ -59,6 +85,7 @@ public class DocPlugin
         attributes.put( "nofooter", "" );
         attributes.put( "source-highlighter", "coderay" );
         attributes.put( "coderay-linenums-mode", "table" );
+        attributes.put( "version", this.project.getVersion() );
 
         task.setAttributes( attributes );
     }

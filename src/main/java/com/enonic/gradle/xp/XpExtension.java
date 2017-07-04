@@ -25,12 +25,6 @@ public class XpExtension
         this.installDir = this.project.property( File.class );
     }
 
-    private String findProperty( final String name )
-    {
-        final Object value = this.project.findProperty( name );
-        return value != null ? value.toString() : null;
-    }
-
     public String getVersion()
     {
         return this.version.get();
