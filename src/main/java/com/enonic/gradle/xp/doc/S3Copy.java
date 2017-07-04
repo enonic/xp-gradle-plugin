@@ -19,6 +19,7 @@ import io.minio.MinioClient;
 import io.minio.Result;
 import io.minio.messages.DeleteError;
 import io.minio.messages.Item;
+import io.minio.policy.PolicyType;
 
 final class S3Copy
 {
@@ -61,6 +62,7 @@ final class S3Copy
         throws Exception
     {
         this.client = new MinioClient( this.settings.getEndpoint(), this.settings.getAccessKey(), this.settings.getSecretKey() );
+        this.client.setBucketPolicy( this.settings.getBucketName(), this.targetPath, PolicyType.READ_ONLY );
     }
 
     public void copy()
