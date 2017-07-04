@@ -32,7 +32,7 @@ public class DocExtension
         return this.s3Settings;
     }
 
-    public void s3( final Closure<S3Settings> settings )
+    public void s3( final Closure settings )
     {
         s3( ConfigureUtil.configureUsing( settings ) );
     }
