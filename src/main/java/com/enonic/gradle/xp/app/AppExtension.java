@@ -30,6 +30,8 @@ public class AppExtension
 
     private List<File> devSourcePaths;
 
+    private boolean systemApp;
+
     public AppExtension( final Project project )
     {
         this.project = project;
@@ -38,6 +40,8 @@ public class AppExtension
         this.devSourcePaths = new ArrayList<>();
         addDevSourcePath( this.project.getProjectDir(), "src", "main", "resources" );
         addDevSourcePath( this.project.getBuildDir(), "resources", "main" );
+
+        this.systemApp = false;
     }
 
     public String getName()
@@ -141,6 +145,16 @@ public class AppExtension
     {
         final File file = new File( root, Joiner.on( File.separatorChar ).join( paths ) );
         this.devSourcePaths.add( file );
+    }
+
+    public boolean isSystemApp()
+    {
+        return this.systemApp;
+    }
+
+    public void setSystemApp( final boolean systemApp )
+    {
+        this.systemApp = systemApp;
     }
 
     public static AppExtension get( final Project project )
