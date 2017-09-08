@@ -8,6 +8,7 @@ import org.asciidoctor.gradle.AsciidoctorTask;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
+import org.gradle.api.tasks.bundling.Zip;
 
 import com.google.common.collect.Maps;
 
@@ -30,27 +31,44 @@ public class DocPlugin
         this.project.getPlugins().apply( AsciidoctorPlugin.class );
 
         createBuildDocTask();
+        createZipDocTask();
         createPublishDocTask();
+        createPublish2DocTask();
         configureAsciidoctor();
     }
 
     private void createBuildDocTask()
     {
-        final Task task = this.project.getTasks().create( "buildDoc" );
+        final Task task = this.project.getTasks().create( BUILD_DOC_TASK );
         task.setGroup( GROUP );
         task.setDescription( "Build documentation based on Asciidoctor (alias for " + ASCIIDOCTOR_TASK + ")." );
         task.dependsOn( ASCIIDOCTOR_TASK );
+    }
+
+    private void createZipDocTask()
+    {
+        final Zip task = this.project.getTasks().create( ZIP_DOC_TASK, Zip.class );
+        task.from( new File( getDocsOutputDir(), "html5" ) );
+        task.setClassifier( "doc" );
+        task.setGroup( GROUP );
+        task.setDescription( "Create a zip archive of the documentation." );
+        task.dependsOn( BUILD_DOC_TASK );
     }
 
     private void createPublishDocTask()
     {
         final PublishDocTask task = this.project.getTasks().create( "publishDoc", PublishDocTask.class );
         task.setGroup( GROUP );
-        task.setDescription( "Publish documentation to S3." );
-        task.dependsOn( ASCIIDOCTOR_TASK );
         task.setSourceDir( new File( getDocsOutputDir(), "html5" ) );
 
         this.project.afterEvaluate( project -> task.setEnabled( isS3Enabled() ) );
+    }
+
+    private void createPublish2DocTask()
+    {
+        final Publish2DocTask task = this.project.getTasks().create( "publish2Doc", Publish2DocTask.class );
+        task.setGroup( GROUP );
+        task.setZipFile( ( (Zip) this.project.getTasks().getByName( ZIP_DOC_TASK ) ).getArchivePath() );
     }
 
     private boolean isS3Enabled()

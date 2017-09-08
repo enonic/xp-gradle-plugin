@@ -12,9 +12,12 @@ public class DocExtension
 
     private final S3Settings s3Settings;
 
+    private final UploadSettings uploadSettings;
+
     public DocExtension()
     {
         this.s3Settings = new S3Settings();
+        this.uploadSettings = new UploadSettings();
     }
 
     public String getVersion()
@@ -40,6 +43,21 @@ public class DocExtension
     public void s3( final Action<S3Settings> settings )
     {
         settings.execute( this.s3Settings );
+    }
+
+    public UploadSettings getUpload()
+    {
+        return this.uploadSettings;
+    }
+
+    public void upload( final Closure settings )
+    {
+        upload( ConfigureUtil.configureUsing( settings ) );
+    }
+
+    public void upload( final Action<UploadSettings> settings )
+    {
+        settings.execute( this.uploadSettings );
     }
 
     public static DocExtension get( final Project project )
