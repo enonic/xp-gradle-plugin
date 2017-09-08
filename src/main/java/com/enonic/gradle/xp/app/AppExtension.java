@@ -2,9 +2,12 @@ package com.enonic.gradle.xp.app;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.gradle.api.Project;
 
@@ -32,6 +35,8 @@ public class AppExtension
 
     private boolean systemApp;
 
+    private Set<String> capabilities;
+
     public AppExtension( final Project project )
     {
         this.project = project;
@@ -42,6 +47,7 @@ public class AppExtension
         addDevSourcePath( this.project.getBuildDir(), "resources", "main" );
 
         this.systemApp = false;
+        this.capabilities = new HashSet<>();
     }
 
     public String getName()
@@ -129,6 +135,16 @@ public class AppExtension
     public void instruction( final String name, final String value )
     {
         this.instructions.merge( name, value, ( a, b ) -> a + "," + b );
+    }
+
+    public Set<String> getCapabilities()
+    {
+        return this.capabilities;
+    }
+
+    public void setCapabilities( final String... values )
+    {
+        this.capabilities.addAll( Arrays.asList( values ) );
     }
 
     private String composeDefaultName()

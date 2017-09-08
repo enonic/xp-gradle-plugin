@@ -60,6 +60,7 @@ final class BundleConfigurator
         instruction( "X-Vendor-Url", application.getVendorUrl() );
         instruction( "X-System-Version", application.getSystemVersion() );
         instruction( "X-Bundle-Type", application.isSystemApp() ? SYSTEM_BUNDLE_TYPE : APPLICATION_BUNDLE_TYPE );
+        instruction( "X-Capability", Joiner.on( ',' ).skipNulls().join( application.getCapabilities() ) );
 
         final Configuration libConfig = this.project.getConfigurations().getByName( "include" );
         final Configuration filteredConfig = new UnwantedJarFilter( libConfig ).filter();
