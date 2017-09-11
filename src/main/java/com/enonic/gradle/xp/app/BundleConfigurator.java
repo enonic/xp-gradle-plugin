@@ -20,6 +20,8 @@ final class BundleConfigurator
 
     private final static String IMPORT_PACKAGE = "Import-Package";
 
+    private final static String PRIVATE_PACKAGE = "Private-Package";
+
     private final static String DEFAULT_IMPORT = "*;resolution:=optional";
 
     private static final String SYSTEM_BUNDLE_TYPE = "system";
@@ -46,6 +48,11 @@ final class BundleConfigurator
 
         final String importPackage = instructions.remove( IMPORT_PACKAGE );
         instruction( IMPORT_PACKAGE, importPackage != null ? importPackage : DEFAULT_IMPORT );
+
+        if (application.isIncludeSiteResources())
+        {
+            instruction( PRIVATE_PACKAGE, "site.*;-split-package:=merge-first" );
+        }
 
         instruction( "-removeheaders", "Require-Capability,Include-Resource" );
         instruction( "-nouses", "true" );
