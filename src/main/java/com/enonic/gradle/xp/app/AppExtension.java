@@ -37,8 +37,6 @@ public class AppExtension
 
     private Set<String> capabilities;
 
-    private boolean includeSiteResources;
-
     public AppExtension( final Project project )
     {
         this.project = project;
@@ -50,7 +48,6 @@ public class AppExtension
 
         this.systemApp = false;
         this.capabilities = new HashSet<>();
-        this.includeSiteResources = false;
     }
 
     public String getName()
@@ -174,16 +171,6 @@ public class AppExtension
     public void setSystemApp( final boolean systemApp )
     {
         this.systemApp = systemApp;
-    }
-
-    public boolean isIncludeSiteResources()
-    {
-        return this.includeSiteResources;
-    }
-
-    public void setIncludeSiteResources( final boolean includeSiteResources )
-    {
-        this.includeSiteResources = includeSiteResources;
     }
 
     public static AppExtension get( final Project project )

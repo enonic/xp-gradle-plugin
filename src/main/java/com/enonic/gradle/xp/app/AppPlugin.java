@@ -1,11 +1,13 @@
 package com.enonic.gradle.xp.app;
 
-import org.dm.gradle.plugins.bundle.BundleExtension;
-import org.dm.gradle.plugins.bundle.BundlePlugin;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.plugins.JavaPlugin;
+import org.gradle.api.tasks.bundling.Jar;
+
+import aQute.bnd.gradle.BndBuilderPlugin;
+import aQute.bnd.gradle.BundleTaskConvention;
 
 import com.enonic.gradle.xp.BasePlugin;
 import com.enonic.gradle.xp.XpExtension;
@@ -19,8 +21,6 @@ public final class AppPlugin
 
     private AppExtension appExt;
 
-    private BundleExtension bundleExt;
-
     @Override
     public void apply( final Project project )
     {
@@ -28,10 +28,9 @@ public final class AppPlugin
 
         this.project.getPlugins().apply( BasePlugin.class );
         this.project.getPlugins().apply( JavaPlugin.class );
-        this.project.getPlugins().apply( BundlePlugin.class );
+        this.project.getPlugins().apply( BndBuilderPlugin.class );
 
         this.ext = XpExtension.get( this.project );
-        this.bundleExt = this.project.getExtensions().getByType( BundleExtension.class );
         this.appExt = AppExtension.create( this.project );
 
         this.project.afterEvaluate( this::afterEvaluate );
@@ -44,7 +43,10 @@ public final class AppPlugin
 
     private void afterEvaluate( final Project project )
     {
-        new BundleConfigurator( project, this.bundleExt ).configure( this.appExt );
+        final Jar jar = (Jar) project.getTasks().getByName( "jar" );
+        final BundleTaskConvention ext = (BundleTaskConvention) jar.getConvention().getPlugins().get( "bundle" );
+
+        new BundleConfigurator( project, ext ).configure( this.appExt );
     }
 
     private void applyDeployTask()
@@ -57,6 +59,8 @@ public final class AppPlugin
     {
         final Configuration libConfig = this.project.getConfigurations().create( "include", conf -> conf.setTransitive( true ) );
         this.project.getConfigurations().getByName( "compile" ).extendsFrom( libConfig );
+
+        this.project.afterEvaluate( new ExcludeRuleConfigurator( libConfig ) );
     }
 
     private void addWebJarConfig()
