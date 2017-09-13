@@ -59,8 +59,6 @@ public final class AppPlugin
     {
         final Configuration libConfig = this.project.getConfigurations().create( "include", conf -> conf.setTransitive( true ) );
         this.project.getConfigurations().getByName( "compile" ).extendsFrom( libConfig );
-
-        this.project.afterEvaluate( new ExcludeRuleConfigurator( libConfig ) );
     }
 
     private void addWebJarConfig()

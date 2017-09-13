@@ -2,29 +2,27 @@ package com.enonic.gradle.xp.app;
 
 import java.util.Map;
 
-import org.gradle.api.Action;
-import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 
 import com.google.common.collect.Maps;
 
 final class ExcludeRuleConfigurator
-    implements Action<Project>
 {
     private final Configuration config;
 
-    ExcludeRuleConfigurator( final Configuration config )
+    private ExcludeRuleConfigurator( final Configuration config )
     {
         this.config = config;
     }
 
-    @Override
-    public void execute( final Project project )
+    public static Configuration configure( final Configuration source )
     {
-        addExclusionRules();
+        final Configuration result = source.copy();
+        new ExcludeRuleConfigurator( result ).apply();
+        return result;
     }
 
-    private void addExclusionRules()
+    private void apply()
     {
         addExclude( "org.slf4j", null );
         addExclude( "org.osgi", null );

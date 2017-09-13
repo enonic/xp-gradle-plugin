@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.gradle.api.Project;
+import org.gradle.api.artifacts.Configuration;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
@@ -37,7 +38,9 @@ final class BundleConfigurator
 
     void configure( final AppExtension application )
     {
-        this.ext.setClasspath( this.project.getConfigurations().getByName( "include" ) );
+        final Configuration libConfig = this.project.getConfigurations().getByName( "include" );
+        final Configuration filteredConfig = ExcludeRuleConfigurator.configure( libConfig );
+        this.ext.setClasspath( filteredConfig );
 
         final Map<String, String> instructions = new HashMap<>();
         instructions.putAll( application.getInstructions() );
