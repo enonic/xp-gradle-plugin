@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
@@ -25,6 +27,8 @@ final class BundleConfigurator
     private static final String SYSTEM_BUNDLE_TYPE = "system";
 
     private static final String APPLICATION_BUNDLE_TYPE = "application";
+
+    private static final String VERSION_REGEX = "(\\d+\\.\\d+\\.\\d+)(?:-[^-]+)?";
 
     private final Project project;
 
@@ -53,6 +57,7 @@ final class BundleConfigurator
         instruction( "-nouses", "true" );
         instruction( "-dsannotations", "*" );
 
+        validateXpVersion( application );
         validateApplicationName( application.getName() );
 
         instruction( "Bundle-SymbolicName", application.getName() );
@@ -89,6 +94,30 @@ final class BundleConfigurator
         {
             throw new IllegalArgumentException( "Invalid application name [" + name + "]. Name should not contain [-]." );
         }
+    }
+
+    private void validateXpVersion( final AppExtension application )
+    {
+        String version = application.getSystemVersion();
+        if ( version == null || version.trim().isEmpty() )
+        {
+            throw new IllegalArgumentException(
+                "XP system version not specified. Please add the following line in the 'app' closure in build.gradle:\r\n  systemVersion = \"${xpVersion}\"" );
+        }
+        final Matcher matcher = Pattern.compile( VERSION_REGEX ).matcher( version.trim() );
+        if ( !matcher.find() )
+        {
+            throw new IllegalArgumentException( "Invalid XP system version: systemVersion = '" + version + "'." );
+        }
+
+        application.setSystemVersion( getVersionRange( matcher.group( 1 ) ) );
+    }
+
+    private String getVersionRange( final String version )
+    {
+        final long[] versionNumbers = Pattern.compile( "\\." ).splitAsStream( version ).mapToLong( Long::valueOf ).toArray();
+        final long upperVersion = versionNumbers[0] + 1;
+        return String.format( "[%d.%d,%d)", versionNumbers[0], versionNumbers[1], upperVersion );
     }
 
     private void includeWebJars()

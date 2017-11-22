@@ -27,7 +27,7 @@ public class AppExtension
 
     private String vendorUrl;
 
-    private String systemVersion = "[6.0,7)";
+    private String systemVersion;
 
     private Map<String, String> instructions;
 
