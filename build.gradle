@@ -1,10 +1,10 @@
 plugins {
     id 'java'
-    id 'maven'
-    id 'com.jfrog.bintray' version '1.7.3'
+    id 'java-gradle-plugin'
+    id 'com.gradle.plugin-publish' version '0.9.7'
 }
 
-version = '1.0.15'
+version = '1.0.16-B1'
 group = 'com.enonic.gradle'
 
 repositories {
@@ -21,28 +21,33 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.8.1'
 }
 
-bintray {
-    user = project.findProperty( 'bintrayUser' )
-    key = project.findProperty( 'bintrayKey' )
-    configurations = ['archives']
-    publish = true
-
-    pkg {
-        repo = 'maven'
-        name = 'xp-gradle-plugin'
-        userOrg = 'enonic'
-        desc = 'Plugin for Enonic XP application development.'
-        licenses = ['Apache-2.0']
-        labels = ['enonic', 'java', 'groovy', 'javascript', 'xp']
-        websiteUrl = 'https://enonic.com'
-        issueTrackerUrl = 'https://github.com/enonic/xp-gradle-plugin/issues'
-        vcsUrl = 'https://github.com/enonic/xp-gradle-plugin.git'
-        githubRepo = 'enonic/xp-gradle-plugin'
-        publicDownloadNumbers = true
-
-        version {
-            attributes =
-                ['gradle-plugin': "com.enonic.xp.base:${group}:${project.name},com.enonic.xp.app:${group}:${project.name},com.enonic.xp.doc:${group}:${project.name},com.enonic.xp.run:${group}:${project.name}"]
+pluginBundle {
+    website = 'https://enonic.com'
+    vcsUrl = 'git@github.com:enonic/xp-gradle-plugin.git'
+    plugins {
+        base_plugin {
+            id = 'com.enonic.xp.base'
+            displayName = 'Enonic XP Base Plugin'
+            description = 'Base plugin for Enonic XP development.'
+            tags = ['enonic', 'java', 'javascript', 'xp']
+        }
+        app_plugin {
+            id = 'com.enonic.xp.app'
+            displayName = 'Enonic XP App Plugin'
+            description = 'Plugin for Enonic XP application development.'
+            tags = ['enonic', 'java', 'javascript', 'xp']
+        }
+        doc_plugin {
+            id = 'com.enonic.xp.doc'
+            displayName = 'Enonic XP Doc Plugin'
+            description = 'Plugin for Enonic XP documentation building.'
+            tags = ['enonic', 'java', 'javascript', 'xp']
+        }
+        run_plugin {
+            id = 'com.enonic.xp.run'
+            displayName = 'Enonic XP Run Plugin'
+            description = 'Plugin for Enonic XP running server and apps.'
+            tags = ['enonic', 'java', 'javascript', 'xp']
         }
     }
 }

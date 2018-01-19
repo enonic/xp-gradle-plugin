@@ -128,7 +128,7 @@ final class BundleConfigurator
         }
 
         final File webjarsDir = new File( this.project.getBuildDir(), "webjars/META-INF/resources/webjars" );
-        instruction( "Include-Resource", "/assets=" + webjarsDir.getAbsolutePath() );
+        instruction( "Include-Resource", "/assets=" + webjarsDir.getAbsolutePath().replace(File.separatorChar, '/') );
     }
 
     private void addDevSourcePaths( final List<File> paths )
