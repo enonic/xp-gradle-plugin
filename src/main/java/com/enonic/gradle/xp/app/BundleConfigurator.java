@@ -128,12 +128,13 @@ final class BundleConfigurator
         }
 
         final File webjarsDir = new File( this.project.getBuildDir(), "webjars/META-INF/resources/webjars" );
-        instruction( "Include-Resource", "/assets=" + webjarsDir.getAbsolutePath().replace(File.separatorChar, '/') );
+        instruction( "Include-Resource", "/assets=" + webjarsDir.getAbsolutePath().replace( File.separatorChar, '/' ) );
     }
 
     private void addDevSourcePaths( final List<File> paths )
     {
-        final Iterator<String> it = paths.stream().map( File::getAbsolutePath ).iterator();
+        final Iterator<String> it =
+            paths.stream().map( File::getAbsolutePath ).map( absolutePath -> absolutePath.replace( File.separatorChar, '/' ) ).iterator();
         instruction( "X-Source-Paths", Joiner.on( ',' ).join( it ) );
     }
 }
