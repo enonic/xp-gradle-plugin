@@ -56,7 +56,6 @@ public final class BasePlugin
 
     private void createUnpackDevTask( final Project project )
     {
-        final UnpackDevTask task = project.getTasks().create( "unpackDevResources", UnpackDevTask.class );
-        project.getTasks().getByPath( "processResources" ).dependsOn( task );
+        project.getTasks().create( "unpackDevResources", UnpackDevTask.class );
     }
 }
