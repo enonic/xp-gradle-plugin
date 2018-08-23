@@ -13,6 +13,7 @@ import org.gradle.api.artifacts.Configuration;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Lists;
 
 import aQute.bnd.gradle.BundleTaskConvention;
 
@@ -75,7 +76,7 @@ final class BundleConfigurator
         }
 
         includeWebJars();
-        addDevSourcePaths( application.getDevSourcePaths() );
+        addDevSourcePaths( application.getDevSourcePaths(), application.getRawDevSourcePaths() );
     }
 
     private void instruction( final String name, final Object value )
@@ -131,10 +132,12 @@ final class BundleConfigurator
         instruction( "Include-Resource", "/assets=" + webjarsDir.getAbsolutePath().replace( File.separatorChar, '/' ) );
     }
 
-    private void addDevSourcePaths( final List<File> paths )
+    private void addDevSourcePaths( final List<File> paths, final List<String> rawPaths )
     {
         final Iterator<String> it =
             paths.stream().map( File::getAbsolutePath ).map( absolutePath -> absolutePath.replace( File.separatorChar, '/' ) ).iterator();
-        instruction( "X-Source-Paths", Joiner.on( ',' ).join( it ) );
+        final List<String> li = Lists.newArrayList( it );
+        li.addAll( rawPaths );
+        instruction( "X-Source-Paths", Joiner.on( ',' ).join( li ) );
     }
 }

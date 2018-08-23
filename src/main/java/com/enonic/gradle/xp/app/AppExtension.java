@@ -32,6 +32,8 @@ public class AppExtension
     private Map<String, String> instructions;
 
     private List<File> devSourcePaths;
+    
+    private List<String> rawDevSourcePaths;
 
     private boolean systemApp;
 
@@ -45,6 +47,8 @@ public class AppExtension
         this.devSourcePaths = new ArrayList<>();
         addDevSourcePath( this.project.getProjectDir(), "src", "main", "resources" );
         addDevSourcePath( this.project.getBuildDir(), "resources", "main" );
+
+        this.rawDevSourcePaths = new ArrayList<>();
 
         this.systemApp = false;
         this.capabilities = new HashSet<>();
@@ -125,6 +129,16 @@ public class AppExtension
     public void setDevSourcePaths( final List<File> devSourcePaths )
     {
         this.devSourcePaths = devSourcePaths;
+    }
+
+    public List<String> getRawDevSourcePaths()
+    {
+        return this.rawDevSourcePaths;
+    }
+
+    public void setRawDevSourcePaths( final List<String> rawDevSourcePaths )
+    {
+        this.rawDevSourcePaths = rawDevSourcePaths;
     }
 
     public Map<String, String> getInstructions()
