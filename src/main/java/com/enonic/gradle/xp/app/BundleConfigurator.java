@@ -2,9 +2,9 @@ package com.enonic.gradle.xp.app;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,7 +13,7 @@ import org.gradle.api.artifacts.Configuration;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import aQute.bnd.gradle.BundleTaskConvention;
 
@@ -134,10 +134,12 @@ final class BundleConfigurator
 
     private void addDevSourcePaths( final List<File> paths, final List<String> rawPaths )
     {
-        final Iterator<String> it =
-            paths.stream().map( File::getAbsolutePath ).map( absolutePath -> absolutePath.replace( File.separatorChar, '/' ) ).iterator();
-        final List<String> li = Lists.newArrayList( it );
-        li.addAll( rawPaths );
-        instruction( "X-Source-Paths", Joiner.on( ',' ).join( li ) );
+        final Set<String> sourcePaths = Sets.newLinkedHashSet();
+        paths.stream().
+            map( File::getAbsolutePath ).
+            map( absolutePath -> absolutePath.replace( File.separatorChar, '/' ) ).
+            forEach( sourcePaths::add );
+        sourcePaths.addAll( rawPaths );
+        instruction( "X-Source-Paths", Joiner.on( ',' ).join( sourcePaths ) );
     }
 }
