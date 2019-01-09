@@ -6,11 +6,11 @@ public interface RunConstants
 
     String APP_CONFIG = "app";
 
-    String DISTRO_CONFIG = "distro";
+    String DISTRO_CONFIG = "enonic-xp-generic";
 
     String DISTRO_GROUP = "com.enonic.xp";
 
-    String DISTRO_NAME = "distro";
+    String DISTRO_NAME = "enonic-xp-generic";
 
     String INSTALL_TASK = "xpInstall";
 

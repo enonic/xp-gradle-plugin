@@ -12,10 +12,12 @@ This Gradle plugin does the following:
 
 ## Usage
 
-To use this plugin, just add the following to your `build.gradle` file:
+To use this plugin for Enonic XP 7.x, just add the following to your `build.gradle` file:
 
 ```gradle
 plugins {
-  id 'com.enonic.xp.app` version `1.2.0`
+  id 'com.enonic.xp.app` version `2.0.0`
 }
 ```
+
+For Enonic XP 6.x, use version 1.2.0.
