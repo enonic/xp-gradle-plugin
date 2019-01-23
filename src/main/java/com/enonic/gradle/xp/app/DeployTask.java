@@ -4,9 +4,8 @@ import java.io.File;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.CopySpec;
-import org.gradle.api.provider.PropertyState;
+import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
-import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
@@ -15,14 +14,14 @@ import org.gradle.api.tasks.bundling.Jar;
 public class DeployTask
     extends DefaultTask
 {
-    private final PropertyState<File> homeDir;
+    private final Property<File> homeDir;
 
     public DeployTask()
     {
         setGroup( "Application" );
         setDescription( "Deploy application to XP_HOME directory." );
         dependsOn( getProject().getTasks().getByName( "build" ) );
-        this.homeDir = getProject().property( File.class );
+        this.homeDir = getProject().getObjects().property( File.class );
     }
 
     @InputFile

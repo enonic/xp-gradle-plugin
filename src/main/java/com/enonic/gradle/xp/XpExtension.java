@@ -4,25 +4,29 @@ import java.io.File;
 
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
-import org.gradle.api.provider.PropertyState;
+import org.gradle.api.model.ObjectFactory;
+import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
 
 public class XpExtension
 {
     private final Project project;
 
-    private final PropertyState<String> version;
+    private final ObjectFactory objectFactory;
 
-    private final PropertyState<File> homeDir;
+    private final Property<String> version;
 
-    private final PropertyState<File> installDir;
+    private final Property<File> homeDir;
+
+    private final Property<File> installDir;
 
     public XpExtension( final Project project )
     {
         this.project = project;
-        this.version = this.project.property( String.class );
-        this.homeDir = this.project.property( File.class );
-        this.installDir = this.project.property( File.class );
+        this.objectFactory = project.getObjects();
+        this.version = objectFactory.property( String.class );
+        this.homeDir = objectFactory.property( File.class );
+        this.installDir = objectFactory.property( File.class );
     }
 
     public String getVersion()
