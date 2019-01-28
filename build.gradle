@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'java-gradle-plugin'
-    id 'com.gradle.plugin-publish' version '0.9.7'
+    id 'com.gradle.plugin-publish' version '0.10.0'
 }
 
 version = '2.0.0'
@@ -24,7 +24,7 @@ dependencies {
 
 pluginBundle {
     website = 'https://enonic.com'
-    vcsUrl = 'git@github.com:enonic/xp-gradle-plugin.git'
+    vcsUrl = 'https://github.com/enonic/xp-gradle-plugin'
     plugins {
         base_plugin {
             id = 'com.enonic.xp.base'
