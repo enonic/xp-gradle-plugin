@@ -17,7 +17,7 @@ dependencies {
     compile 'biz.aQute.bnd:biz.aQute.bnd.gradle:4.1.0'
     compile 'com.google.guava:guava:22.0'
     compile 'org.osgi:osgi.core:6.0.0'
-    compile 'io.minio:minio:3.0.5'
+    compile 'io.minio:minio:7.0.2'
     compile 'com.squareup.okhttp3:okhttp:3.8.1'
     compile 'com.sun.activation:javax.activation:1.2.0'
 }
