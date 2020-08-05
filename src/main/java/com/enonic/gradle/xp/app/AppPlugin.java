@@ -39,6 +39,7 @@ public final class AppPlugin
         addWebJarConfig();
         applyDeployTask();
         applyUnpackWebJarTask();
+        skipJarVersion();
     }
 
     private void afterEvaluate( final Project project )
@@ -70,5 +71,11 @@ public final class AppPlugin
     {
         final UnpackWebJarTask task = this.project.getTasks().create( "unpackWebJars", UnpackWebJarTask.class );
         this.project.getTasks().getByName( "jar" ).dependsOn( task );
+    }
+
+    private void skipJarVersion()
+    {
+        final Jar jar = (Jar) project.getTasks().getByName( "jar" );
+        jar.setVersion( null );
     }
 }
