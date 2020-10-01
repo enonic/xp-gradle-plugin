@@ -18,7 +18,7 @@ dependencies {
     compile 'com.google.guava:guava:23.0'
     compile 'org.osgi:osgi.core:7.0.0'
     compile 'io.minio:minio:3.0.5'
-    compile 'com.squareup.okhttp3:okhttp:4.8.0'
+    compile 'com.squareup.okhttp3:okhttp:4.9.0'
     compile 'com.sun.activation:javax.activation:1.2.0'
 }
 
