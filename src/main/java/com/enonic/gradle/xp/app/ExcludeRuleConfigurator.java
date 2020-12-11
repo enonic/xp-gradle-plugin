@@ -1,10 +1,9 @@
 package com.enonic.gradle.xp.app;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.gradle.api.artifacts.Configuration;
-
-import com.google.common.collect.Maps;
 
 final class ExcludeRuleConfigurator
 {
@@ -36,7 +35,7 @@ final class ExcludeRuleConfigurator
 
     private void addExclude( final String group, final String module )
     {
-        final Map<String, String> map = Maps.newHashMap();
+        final Map<String, String> map = new HashMap<>();
         if ( group != null )
         {
             map.put( "group", group );

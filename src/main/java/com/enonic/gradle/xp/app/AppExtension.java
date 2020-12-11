@@ -7,11 +7,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.gradle.api.Project;
-
-import com.google.common.base.Joiner;
 
 public class AppExtension
 {
@@ -29,7 +28,7 @@ public class AppExtension
 
     private String systemVersion;
 
-    private Map<String, String> instructions;
+    private final Map<String, String> instructions;
 
     private List<File> devSourcePaths;
     
@@ -37,7 +36,7 @@ public class AppExtension
 
     private boolean systemApp;
 
-    private Set<String> capabilities;
+    private final Set<String> capabilities;
 
     public AppExtension( final Project project )
     {
@@ -56,14 +55,7 @@ public class AppExtension
 
     public String getName()
     {
-        if ( this.name == null )
-        {
-            return composeDefaultName();
-        }
-        else
-        {
-            return this.name;
-        }
+        return Objects.requireNonNullElseGet( this.name, this::composeDefaultName );
     }
 
     public void setName( final String name )
@@ -173,7 +165,7 @@ public class AppExtension
 
     private void addDevSourcePath( final File root, final String... paths )
     {
-        final File file = new File( root, Joiner.on( File.separatorChar ).join( paths ) );
+        final File file = new File( root, String.join( String.valueOf( File.separatorChar ), paths ) );
         this.devSourcePaths.add( file );
     }
 
