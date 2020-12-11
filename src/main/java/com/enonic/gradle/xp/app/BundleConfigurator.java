@@ -2,6 +2,7 @@ package com.enonic.gradle.xp.app;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -10,10 +11,6 @@ import java.util.regex.Pattern;
 
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
-
-import com.google.common.base.Joiner;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import aQute.bnd.gradle.BundleTaskConvention;
 
@@ -47,8 +44,7 @@ final class BundleConfigurator
         final Configuration filteredConfig = ExcludeRuleConfigurator.configure( libConfig );
         this.ext.setClasspath( filteredConfig );
 
-        final Map<String, String> instructions = new HashMap<>();
-        instructions.putAll( application.getInstructions() );
+        final Map<String, String> instructions = new HashMap<>( application.getInstructions() );
 
         final String importPackage = instructions.remove( IMPORT_PACKAGE );
         instruction( IMPORT_PACKAGE, importPackage != null ? importPackage : DEFAULT_IMPORT );
@@ -68,7 +64,7 @@ final class BundleConfigurator
         instruction( "X-Vendor-Url", application.getVendorUrl() );
         instruction( "X-System-Version", application.getSystemVersion() );
         instruction( "X-Bundle-Type", application.isSystemApp() ? SYSTEM_BUNDLE_TYPE : APPLICATION_BUNDLE_TYPE );
-        instruction( "X-Capability", Joiner.on( ',' ).skipNulls().join( application.getCapabilities() ) );
+        instruction( "X-Capability", String.join( ",", application.getCapabilities() ) );
 
         for ( final Map.Entry<String, String> entry : instructions.entrySet() )
         {
@@ -83,7 +79,7 @@ final class BundleConfigurator
     {
         if ( value != null )
         {
-            final Map<String, String> map = Maps.newHashMap();
+            final Map<String, String> map = new HashMap<>();
             map.put( name, value.toString() );
             this.ext.bnd( map );
         }
@@ -134,12 +130,12 @@ final class BundleConfigurator
 
     private void addDevSourcePaths( final List<File> paths, final List<String> rawPaths )
     {
-        final Set<String> sourcePaths = Sets.newLinkedHashSet();
+        final Set<String> sourcePaths = new LinkedHashSet<>();
         paths.stream().
             map( File::getAbsolutePath ).
             map( absolutePath -> absolutePath.replace( File.separatorChar, '/' ) ).
             forEach( sourcePaths::add );
         sourcePaths.addAll( rawPaths );
-        instruction( "X-Source-Paths", Joiner.on( ',' ).join( sourcePaths ) );
+        instruction( "X-Source-Paths", String.join( ",", sourcePaths ) );
     }
 }
