@@ -13,13 +13,9 @@ repositories {
 
 dependencies {
     compile gradleApi()
-    compile 'org.asciidoctor:asciidoctor-gradle-plugin:1.6.1'
     compile 'biz.aQute.bnd:biz.aQute.bnd.gradle:5.2.0'
     compile 'com.google.guava:guava:23.0'
     compile 'org.osgi:osgi.core:7.0.0'
-    compile 'io.minio:minio:3.0.5'
-    compile 'com.squareup.okhttp3:okhttp:4.9.0'
-    compile 'com.sun.activation:javax.activation:1.2.0'
 }
 
 pluginBundle {
@@ -36,18 +32,6 @@ pluginBundle {
             id = 'com.enonic.xp.app'
             displayName = 'Enonic XP App Plugin'
             description = 'Plugin for Enonic XP application development.'
-            tags = ['enonic', 'java', 'javascript', 'xp']
-        }
-        doc_plugin {
-            id = 'com.enonic.xp.doc'
-            displayName = 'Enonic XP Doc Plugin'
-            description = 'Plugin for Enonic XP documentation building.'
-            tags = ['enonic', 'java', 'javascript', 'xp']
-        }
-        run_plugin {
-            id = 'com.enonic.xp.run'
-            displayName = 'Enonic XP Run Plugin'
-            description = 'Plugin for Enonic XP running server and apps.'
             tags = ['enonic', 'java', 'javascript', 'xp']
         }
     }

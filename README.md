@@ -6,8 +6,6 @@
 This Gradle plugin does the following:
 
 * Build application jar files for Enonic XP (`com.enonic.xp.app`).
-* Possible to provision and run Enonic XP with your app deployed (`com.enonic.xp.run`).
-* Creates documentation for the plugin (`com.enonic.xp.doc`).
 * Configures easy steps for deploying artifacts to a repo.
 
 ## Usage
@@ -16,7 +14,7 @@ To use this plugin for Enonic XP 7.x, just add the following to your `build.grad
 
 ```gradle
 plugins {
-  id 'com.enonic.xp.app` version `2.0.0`
+  id 'com.enonic.xp.app` version `2.1.0`
 }
 ```
 
