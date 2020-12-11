@@ -14,7 +14,7 @@ repositories {
 dependencies {
     compile gradleApi()
     compile 'org.asciidoctor:asciidoctor-gradle-plugin:1.6.1'
-    compile 'biz.aQute.bnd:biz.aQute.bnd.gradle:5.1.2'
+    compile 'biz.aQute.bnd:biz.aQute.bnd.gradle:5.2.0'
     compile 'com.google.guava:guava:23.0'
     compile 'org.osgi:osgi.core:7.0.0'
     compile 'io.minio:minio:3.0.5'
