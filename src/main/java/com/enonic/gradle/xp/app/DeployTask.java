@@ -27,7 +27,7 @@ public class DeployTask
     @InputFile
     public File getFrom()
     {
-        return ( (Jar) getProject().getTasks().getByPath( "jar" ) ).getArchivePath();
+        return ( (Jar) getProject().getTasks().getByPath( "jar" ) ).getArchiveFile().get().getAsFile();
     }
 
     private File resolveHomeDir()

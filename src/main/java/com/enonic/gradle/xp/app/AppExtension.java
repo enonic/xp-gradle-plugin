@@ -36,6 +36,8 @@ public class AppExtension
 
     private boolean systemApp;
 
+    private boolean keepArchiveFileName;
+
     private final Set<String> capabilities;
 
     public AppExtension( final Project project )
@@ -49,7 +51,6 @@ public class AppExtension
 
         this.rawDevSourcePaths = new ArrayList<>();
 
-        this.systemApp = false;
         this.capabilities = new HashSet<>();
     }
 
@@ -177,6 +178,16 @@ public class AppExtension
     public void setSystemApp( final boolean systemApp )
     {
         this.systemApp = systemApp;
+    }
+
+    public boolean isKeepArchiveFileName()
+    {
+        return keepArchiveFileName;
+    }
+
+    public void setKeepArchiveFileName( final boolean keepArchiveFileName )
+    {
+        this.keepArchiveFileName = keepArchiveFileName;
     }
 
     public static AppExtension get( final Project project )
