@@ -1,5 +1,9 @@
 package com.enonic.gradle.xp.app;
 
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
@@ -39,7 +43,6 @@ public final class AppPlugin
         addWebJarConfig();
         applyDeployTask();
         applyUnpackWebJarTask();
-        skipJarVersion();
     }
 
     private void afterEvaluate( final Project project )
@@ -48,6 +51,10 @@ public final class AppPlugin
         final BundleTaskConvention ext = (BundleTaskConvention) jar.getConvention().getPlugins().get( "bundle" );
 
         new BundleConfigurator( project, ext ).configure( this.appExt );
+        if ( !appExt.isKeepArchiveFileName() )
+        {
+            skipJarVersion();
+        }
     }
 
     private void applyDeployTask()
@@ -76,6 +83,13 @@ public final class AppPlugin
     private void skipJarVersion()
     {
         final Jar jar = (Jar) project.getTasks().getByName( "jar" );
-        jar.setVersion( null );
+        final String base = jar.getArchiveBaseName().getOrElse( "" );
+        final String appendix = jar.getArchiveAppendix().getOrElse( "" );
+        final String classifier = jar.getArchiveClassifier().getOrElse( "" );
+        final String ext = jar.getArchiveExtension().getOrElse( "" );
+        final String jarWithoutExt = Stream.of( base, appendix, classifier ).
+            filter( Predicate.not( String::isEmpty ) ).
+            collect( Collectors.joining( "-" ) );
+        jar.getArchiveFileName().set( String.join( ".", jarWithoutExt, ext ) );
     }
 }
