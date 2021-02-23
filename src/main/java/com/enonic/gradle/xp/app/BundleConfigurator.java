@@ -87,9 +87,14 @@ final class BundleConfigurator
 
     private void validateApplicationName( final String name )
     {
-        if ( name.contains( "-" ) )
+        // Initially validated only to not contain `-` for historical reasons.
+        // In practice application names (not display names) is more limited:
+        // Cannot be `_`, so it cannot conflict with XP reserved endpoint.
+        // Must be valid OSGi Bundle-SymbolicName (pre-validate here for clarity, and exclude `-` as well).
+        if ( name.equals( "_" ) || !name.matches( "[a-zA-Z0-9_]+(?:\\.[a-zA-Z0-9_]+)*" ) )
         {
-            throw new IllegalArgumentException( "Invalid application name [" + name + "]. Name should not contain [-]." );
+            throw new IllegalArgumentException( "Invalid application name [" + name + "]. Name should not contain [-], " +
+                                                    "should not be single underscore and should be a valid OSGi Bundle-SymbolicName." );
         }
     }
 
