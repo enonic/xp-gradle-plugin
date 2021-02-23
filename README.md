@@ -40,4 +40,7 @@ app {
 }
 ```
 
+By default, applications are built with development source paths included.  
+To exclude development source paths from the application set `com.enonic.xp.app.production` property to `true`.
+
 For Enonic XP 6.x, use version 1.2.0.
