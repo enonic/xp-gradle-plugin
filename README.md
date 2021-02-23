@@ -18,4 +18,26 @@ plugins {
 }
 ```
 
+To configure application, use app extension
+```
+app {
+    // application name - unique application key
+    name = "name.of.your.app"
+    
+    // The display name of the application
+    displayName = "My Application Name"
+    
+    // vendor information
+    vendorName = "Acme Inc"
+    vendorUrl = "http://example.com"
+    
+    // minimum supported XP version
+    systemVersion = "${xpVersion}"
+    
+    // By default, plugin generates a jar without version in file name.
+    // Set to true, to restore Gradle archive naming behaviour.
+    keepArchiveFileName = false
+}
+```
+
 For Enonic XP 6.x, use version 1.2.0.
