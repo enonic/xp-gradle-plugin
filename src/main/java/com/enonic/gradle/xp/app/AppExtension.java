@@ -38,6 +38,8 @@ public class AppExtension
 
     private boolean keepArchiveFileName;
 
+    private boolean allowDevSourcePathsPublishing;
+
     private final Set<String> capabilities;
 
     public AppExtension( final Project project )
@@ -188,6 +190,16 @@ public class AppExtension
     public void setKeepArchiveFileName( final boolean keepArchiveFileName )
     {
         this.keepArchiveFileName = keepArchiveFileName;
+    }
+
+    public boolean isAllowDevSourcePathsPublishing()
+    {
+        return allowDevSourcePathsPublishing;
+    }
+
+    public void setAllowDevSourcePathsPublishing( final boolean allowDevSourcePathsPublishing )
+    {
+        this.allowDevSourcePathsPublishing = allowDevSourcePathsPublishing;
     }
 
     public static AppExtension get( final Project project )

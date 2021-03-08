@@ -38,7 +38,7 @@ final class BundleConfigurator
         this.ext = ext;
     }
 
-    void configure( final AppExtension application )
+    boolean configure( final AppExtension application )
     {
         final Configuration libConfig = this.project.getConfigurations().getByName( "include" );
         final Configuration filteredConfig = ExcludeRuleConfigurator.configure( libConfig );
@@ -72,7 +72,7 @@ final class BundleConfigurator
         }
 
         includeWebJars();
-        addDevSourcePaths( application.getDevSourcePaths(), application.getRawDevSourcePaths() );
+        return addDevSourcePaths( application.getDevSourcePaths(), application.getRawDevSourcePaths() );
     }
 
     private void instruction( final String name, final Object value )
@@ -133,12 +133,12 @@ final class BundleConfigurator
         instruction( "Include-Resource", "/assets=" + webjarsDir.getAbsolutePath().replace( File.separatorChar, '/' ) );
     }
 
-    private void addDevSourcePaths( final List<File> paths, final List<String> rawPaths )
+    private boolean addDevSourcePaths( final List<File> paths, final List<String> rawPaths )
     {
         final Object property = project.findProperty( "com.enonic.xp.app.production" );
         if ( "true".equals( property ) || Boolean.TRUE.equals( property ) )
         {
-            return;
+            return false;
         }
         final Set<String> sourcePaths = new LinkedHashSet<>();
         paths.stream().
@@ -146,6 +146,12 @@ final class BundleConfigurator
             map( absolutePath -> absolutePath.replace( File.separatorChar, '/' ) ).
             forEach( sourcePaths::add );
         sourcePaths.addAll( rawPaths );
-        instruction( "X-Source-Paths", String.join( ",", sourcePaths ) );
+        final String xSourcePaths = String.join( ",", sourcePaths );
+        if ( xSourcePaths.isBlank() )
+        {
+            return false;
+        }
+        instruction( "X-Source-Paths", sourcePaths );
+        return true;
     }
 }

@@ -21,26 +21,39 @@ plugins {
 To configure application, use app extension
 ```
 app {
-    // application name - unique application key
-    name = "name.of.your.app"
+    // Application name - unique application key
+    // Default is "${project.group}.${project.name}"
+    name = "name.of.my.app"
     
     // The display name of the application
     displayName = "My Application Name"
     
-    // vendor information
+    // Vendor information
     vendorName = "Acme Inc"
     vendorUrl = "http://example.com"
     
-    // minimum supported XP version
+    // Minimum supported XP version
     systemVersion = "${xpVersion}"
     
-    // By default, plugin generates a jar without version in file name.
-    // Set to true, to restore Gradle archive naming behaviour.
+    // By default, plugin specifies development source paths (["${projectDir}/src/main/resources","$buildDir/resources/main" ])
+    // to simplify developmnet in XP `dev` mode.
+    // This property allows to override development source paths.
+    devSourcePaths = []
+    
+    // By default, plugin prevents applications with non-empty development source paths to be published to maven repositories.
+    // Set to true to allow applications with development source paths to be published.
+    allowDevSourcePathsPublishing = false
+
+    // By default, plugin generates a jar without version in the file name.
+    // Set to true to restore Gradle archive naming behaviour.
     keepArchiveFileName = false
-}
+    }
 ```
 
-By default, applications are built with development source paths included.  
-To exclude development source paths from the application set `com.enonic.xp.app.production` property to `true`.
+`com.enonic.xp.app.production` property set to `true` makes development source paths (`X-Source-Paths`) empty regardless of configuration
+
+```
+./gradlew clean publish -Pcom.enonic.xp.app.production=true
+```
 
 For Enonic XP 6.x, use version 1.2.0.
