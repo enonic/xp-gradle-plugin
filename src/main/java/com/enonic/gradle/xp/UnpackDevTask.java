@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.gradle.api.DefaultTask;
-import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.file.CopySpec;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.OutputDirectory;
@@ -25,8 +24,7 @@ public class UnpackDevTask
     {
         try
         {
-            final Configuration config = getProject().getConfigurations().getByName( "compile" );
-            return config.getFiles();
+            return getProject().getConfigurations().getByName( "compileClasspath" ).getFiles();
         }
         catch ( final Exception e )
         {
