@@ -1,4 +1,5 @@
 plugins {
+    `maven-publish`
     `java-gradle-plugin`
     id("com.gradle.plugin-publish") version "0.13.0"
 }
@@ -7,7 +8,7 @@ version = "2.1.0-SNAPSHOT"
 group = "com.enonic.gradle"
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {

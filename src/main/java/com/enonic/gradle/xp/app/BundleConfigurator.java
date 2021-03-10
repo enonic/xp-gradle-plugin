@@ -5,9 +5,8 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
@@ -26,8 +25,6 @@ final class BundleConfigurator
 
     private static final String APPLICATION_BUNDLE_TYPE = "application";
 
-    private static final String VERSION_REGEX = "(\\d+\\.\\d+\\.\\d+)(?:-[^-]+)?";
-
     private final Project project;
 
     private final BundleTaskConvention ext;
@@ -40,8 +37,22 @@ final class BundleConfigurator
 
     boolean configure( final AppExtension application )
     {
+        final String version = Objects.requireNonNullElse( application.getSystemVersion(), "" ).trim();
+        if ( version.isEmpty() )
+        {
+            throw new IllegalArgumentException(
+                "XP system version not specified. Please add the following line in the 'app' closure in build.gradle:\r\n  systemVersion = \"${xpVersion}\"" );
+        }
+        final XpVersion xpVersion = XpVersion.parse( version );
+        if ( !xpVersion.valid )
+        {
+            throw new IllegalArgumentException( "Invalid XP system version: systemVersion = '" + version + "'" );
+        }
+
+        validateApplicationName( application.getName() );
+
         final Configuration libConfig = this.project.getConfigurations().getByName( "include" );
-        final Configuration filteredConfig = ExcludeRuleConfigurator.configure( libConfig );
+        final Configuration filteredConfig = DependenciesConfigurator.configure( libConfig, xpVersion );
         this.ext.setClasspath( filteredConfig );
 
         final Map<String, String> instructions = new HashMap<>( application.getInstructions() );
@@ -54,15 +65,13 @@ final class BundleConfigurator
         instruction( "-nouses", "true" );
         instruction( "-dsannotations", "*" );
 
-        validateXpVersion( application );
-        validateApplicationName( application.getName() );
-
         instruction( "Bundle-SymbolicName", application.getName() );
         instruction( "Bundle-Name", application.getDisplayName() );
         instruction( "X-Application-Url", application.getUrl() );
         instruction( "X-Vendor-Name", application.getVendorName() );
         instruction( "X-Vendor-Url", application.getVendorUrl() );
-        instruction( "X-System-Version", application.getSystemVersion() );
+        instruction( "X-System-Version",
+                     String.format( "[%s.%s,%s)", xpVersion.major, xpVersion.minor, Math.addExact( xpVersion.major, 1 ) ) );
         instruction( "X-Bundle-Type", application.isSystemApp() ? SYSTEM_BUNDLE_TYPE : APPLICATION_BUNDLE_TYPE );
         instruction( "X-Capability", String.join( ",", application.getCapabilities() ) );
 
@@ -96,30 +105,6 @@ final class BundleConfigurator
             throw new IllegalArgumentException( "Invalid application name [" + name + "]. Name should not contain [-], " +
                                                     "should not be single underscore and should be a valid OSGi Bundle-SymbolicName." );
         }
-    }
-
-    private void validateXpVersion( final AppExtension application )
-    {
-        String version = application.getSystemVersion();
-        if ( version == null || version.trim().isEmpty() )
-        {
-            throw new IllegalArgumentException(
-                "XP system version not specified. Please add the following line in the 'app' closure in build.gradle:\r\n  systemVersion = \"${xpVersion}\"" );
-        }
-        final Matcher matcher = Pattern.compile( VERSION_REGEX ).matcher( version.trim() );
-        if ( !matcher.find() )
-        {
-            throw new IllegalArgumentException( "Invalid XP system version: systemVersion = '" + version + "'." );
-        }
-
-        application.setSystemVersion( getVersionRange( matcher.group( 1 ) ) );
-    }
-
-    private String getVersionRange( final String version )
-    {
-        final long[] versionNumbers = Pattern.compile( "\\." ).splitAsStream( version ).mapToLong( Long::valueOf ).toArray();
-        final long upperVersion = versionNumbers[0] + 1;
-        return String.format( "[%d.%d,%d)", versionNumbers[0], versionNumbers[1], upperVersion );
     }
 
     private void includeWebJars()
