@@ -35,17 +35,16 @@ app {
     // Minimum supported XP version
     systemVersion = "${xpVersion}"
     
-    // By default, plugin specifies development source paths (["${projectDir}/src/main/resources","$buildDir/resources/main" ])
-    // to simplify developmnet in XP `dev` mode.
-    // This property allows to override development source paths.
+    // By default, the plugin is using these source paths to simplify development in XP `dev` mode: ["${projectDir}/src/main/resources","$buildDir/resources/main" ].
+    // This property allows overriding these default paths, for example if you want to include sources from other modules
     devSourcePaths = []
     
-    // By default, plugin prevents applications with non-empty development source paths to be published to maven repositories.
-    // Set to true to allow applications with development source paths to be published.
+    // By default, the plugin prevents applications with non-empty development source paths to be published to maven repositories.
+    // Set to `true` to allow applications with development source paths to be published.
     allowDevSourcePathsPublishing = false
 
-    // By default, plugin generates a jar without version in the file name.
-    // Set to true to restore Gradle archive naming behaviour.
+    // By default, the plugin generates a jar without version in the file name.
+    // Set to `true` to restore Gradle archive naming behaviour.
     keepArchiveFileName = false
     }
 ```
