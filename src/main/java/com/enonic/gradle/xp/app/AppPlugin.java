@@ -8,6 +8,7 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.plugins.JavaPlugin;
+import org.gradle.api.publish.maven.tasks.PublishToMavenRepository;
 import org.gradle.api.tasks.bundling.Jar;
 
 import aQute.bnd.gradle.BndBuilderPlugin;
@@ -50,10 +51,15 @@ public final class AppPlugin
         final Jar jar = (Jar) project.getTasks().getByName( "jar" );
         final BundleTaskConvention ext = (BundleTaskConvention) jar.getConvention().getPlugins().get( "bundle" );
 
-        new BundleConfigurator( project, ext ).configure( this.appExt );
+        final boolean hasSourcePaths = new BundleConfigurator( project, ext ).configure( this.appExt );
+
         if ( !appExt.isKeepArchiveFileName() )
         {
             skipJarVersion();
+        }
+        if ( !appExt.isAllowDevSourcePathsPublishing() && hasSourcePaths )
+        {
+            preventSourcePathsPublishing();
         }
     }
 
@@ -91,5 +97,13 @@ public final class AppPlugin
             filter( Predicate.not( String::isEmpty ) ).
             collect( Collectors.joining( "-" ) );
         jar.getArchiveFileName().set( String.join( ".", jarWithoutExt, ext ) );
+    }
+
+    private void preventSourcePathsPublishing()
+    {
+        this.project.getTasks().withType( PublishToMavenRepository.class ).all( task -> task.doFirst( t -> {
+            throw new IllegalStateException( "Application has non-empty X-Source-Paths. " +
+                                                 "Build application with com.enonic.xp.app.production property to true for publishing." );
+        } ) );
     }
 }
