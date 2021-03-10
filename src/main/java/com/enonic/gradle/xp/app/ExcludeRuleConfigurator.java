@@ -30,6 +30,7 @@ final class ExcludeRuleConfigurator
         addExclude( "com.enonic.xp", "web-api" );
         addExclude( "com.enonic.xp", "admin-api" );
         addExclude( "com.enonic.xp", "portal-api" );
+        addExclude( "com.enonic.xp", "jaxrs-api" );
         addExclude( "com.google.guava", "guava" );
     }
 
