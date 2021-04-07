@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
@@ -81,6 +82,8 @@ final class BundleConfigurator
         }
 
         includeWebJars();
+        includeServiceLoader( filteredConfig );
+
         return addDevSourcePaths( application.getDevSourcePaths(), application.getRawDevSourcePaths() );
     }
 
@@ -88,9 +91,7 @@ final class BundleConfigurator
     {
         if ( value != null )
         {
-            final Map<String, String> map = new HashMap<>();
-            map.put( name, value.toString() );
-            this.ext.bnd( map );
+            this.ext.bnd( Map.of( name, value.toString() ) );
         }
     }
 
@@ -115,7 +116,20 @@ final class BundleConfigurator
         }
 
         final File webjarsDir = new File( this.project.getBuildDir(), "webjars/META-INF/resources/webjars" );
-        instruction( "Include-Resource", "/assets=" + webjarsDir.getAbsolutePath().replace( File.separatorChar, '/' ) );
+        instruction( "-includeresource.webjar", "assets=" + webjarsDir.getAbsolutePath().replace( File.separatorChar, '/' ) );
+    }
+
+    private void includeServiceLoader( final Configuration filteredConfig )
+    {
+        String serviceloaderResources = filteredConfig.
+            getFiles().
+            stream().
+            map( file -> "@" + file.getName() + "!/META-INF/services/*" ).
+            collect( Collectors.joining( "," ) );
+        if ( !serviceloaderResources.isBlank() )
+        {
+            instruction( "-includeresource.serviceloader", serviceloaderResources );
+        }
     }
 
     private boolean addDevSourcePaths( final List<File> paths, final List<String> rawPaths )
