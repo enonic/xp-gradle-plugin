@@ -4,7 +4,6 @@ import java.io.File;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.plugins.JavaPlugin;
 
 public final class BasePlugin
     implements Plugin<Project>
@@ -16,20 +15,6 @@ public final class BasePlugin
         ext.setVersion( "7.+" );
         ext.setInstallDir( new File( project.getBuildDir(), "xp" ) );
         ext.setHomeDir( findHomeDir( ext.getInstallDir(), project.findProperty( "xpHome" ) ) );
-
-        applyJavaBased( project );
-    }
-
-    private void applyJavaBased( final Project project )
-    {
-        if ( project.getPlugins().hasPlugin( JavaPlugin.class ) )
-        {
-            createUnpackDevTask( project );
-        }
-        else
-        {
-            project.getPlugins().withType( JavaPlugin.class ).whenPluginAdded( plugin -> createUnpackDevTask( project ) );
-        }
     }
 
     private static File findHomeDir( final File installDir, final Object xpHomeProp )
@@ -52,10 +37,5 @@ public final class BasePlugin
         }
 
         return new File( installDir, "home" );
-    }
-
-    private void createUnpackDevTask( final Project project )
-    {
-        project.getTasks().create( "unpackDevResources", UnpackDevTask.class );
     }
 }
