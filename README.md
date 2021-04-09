@@ -14,7 +14,7 @@ To use this plugin for Enonic XP 7.x, just add the following to your `build.grad
 
 ```gradle
 plugins {
-  id 'com.enonic.xp.app` version `2.1.0`
+  id 'com.enonic.xp.app' version '3.0.0'
 }
 ```
 
@@ -30,7 +30,7 @@ app {
     
     // Vendor information
     vendorName = "Acme Inc"
-    vendorUrl = "http://example.com"
+    vendorUrl = "https://example.com"
     
     // Minimum supported XP version
     systemVersion = "${xpVersion}"
