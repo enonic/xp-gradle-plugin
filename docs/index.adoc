@@ -1,0 +1,164 @@
+= XP Gradle Plugins
+:toc: right
+
+== Enonic XP Base Plugin
+
+This plugin simplifies development of libraries and applications for Enonic XP.
+
+=== Installation
+
+To install this plugin for Enonic XP 7.x, just add the following to your `build.gradle` file:
+
+[source,groovy]
+----
+plugins {
+  id 'com.enonic.xp.base' version '3.0.0'
+}
+----
+
+=== Usage
+
+Plugin defines a shorthand notation for Enonic repository that contains Enonic XP libraries and API artifacts.
+
+To declare Enonic repository add this to your `build.gradle` file:
+[source,groovy]
+----
+repositories {
+  xp.enonicRepo()
+}
+----
+
+In cases when `SNAPSHOT` versions of artifacts are needed, it is possible to specify `dev` repository that contains both SNAPSHOT and release versions:
+
+[source,groovy]
+----
+repositories {
+  xp.enonicRepo('dev')
+}
+----
+
+== Enonic XP App Plugin
+
+This plugin allows building application jar files for Enonic XP.
+
+This plugin automatically applies Enonic XP Base Plugin as well.
+
+=== Installation
+
+To install this plugin for Enonic XP 7.x, just add the following to your `build.gradle` file:
+
+[source,groovy]
+----
+plugins {
+  id 'com.enonic.xp.app' version '3.0.0'
+}
+----
+
+=== Usage
+
+==== Configuration
+
+Here is the list of supported configuration properties:
+[source,groovy]
+----
+app {
+    // Application name - unique application key.
+    // Default is "${project.group}.${project.name}"
+    name = "name.of.my.app"
+
+    // The display name of the application.
+    displayName = "My Application Name"
+
+    // Vendor and distribution information of the application.
+    url = "https://example.com/app"
+    vendorName = "Acme Inc"
+    vendorUrl = "https://example.com"
+
+    // Minimum supported XP version for the application.
+    systemVersion = "${xpVersion}"
+
+    // By default, the plugin is using these source paths to simplify development in XP `dev` mode: ["${projectDir}/src/main/resources","${buildDir}/resources/main" ].
+    // This property allows overriding these default paths, for example if you want to include sources from other modules.
+    devSourcePaths = []
+
+    // Set to `true` to allow applications with development source paths to be published.
+    allowDevSourcePathsPublishing = false
+
+    // Set to `true` to restore Gradle archive naming behaviour.
+    keepArchiveFileName = false
+}
+----
+
+Plugin defines two dependency configurations `include` and `webjar`
+[source,groovy]
+----
+dependencies {
+    include "com.enonic.xp:lib-content:${xpVersion}"
+    webjar "org.webjars:momentjs:2.29.1"
+}
+----
+
+`include` dependencies get "private packaged" inside the resulting jar file using https://plugins.gradle.org/plugin/biz.aQute.bnd[Bnd Gradle Plugin].
+You can find more information about packaging in https://bnd.bndtools.org/heads/private_package.html[Bnd Tool documentation].
+
+`webjar` dependencies content (`META-INF/resources/webjars` ) is placed into `/assets` folder inside the resulting jar file.
+You can find more information about WebJars on https://www.webjars.org/
+
+NOTE: Usually `xpVersion` system property is defined in `gradle.properties`
+
+[source,properties]
+----
+xpVersion=7.0.0
+----
+
+==== Building application
+
+Plugin uses built-in Gradle `java` plugin to build applications.
+
+----
+./gradlew build
+----
+
+By default, starting from version 3.0.0, the plugin generates the jar without version in the file name.
+You can control it with `app.keepArchiveFileName` setting.
+
+===== Deploying application
+
+Plugin defines a `deploy` gradle task. This task copies the application jar file into "deploy" folder under XP home directory.
+----
+./gradlew deploy
+----
+
+There are several ways to specify XP home directory:
+
+- By specifying `xpHome` property
+----
+./gradlew deploy -PxpHome=/opt/xp
+----
+
+- By specifying `xp.home` system property, for instance in `gradle.properties`
+[source,properties]
+----
+xp.home=/opt/xp
+----
+
+- By defining Environment variable
+----
+export XP_HOME=/opt/xp
+----
+----
+SET XP_HOME=C:\xp
+----
+
+==== Publishing application
+
+By default, the plugin prevents applications with non-empty development source paths to be published to Maven repository.
+
+`com.enonic.xp.app.production` property set to `true` makes development source paths (`X-Source-Paths`) empty regardless of configuration.
+You need to set it when publishing the application to Maven repository.
+
+You can control it with `app.allowDevSourcePathsPublishing` setting.
+
+----
+./gradlew clean publish -Pcom.enonic.xp.app.production=true
+----
