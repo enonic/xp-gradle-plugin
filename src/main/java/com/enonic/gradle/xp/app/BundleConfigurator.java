@@ -150,7 +150,7 @@ final class BundleConfigurator
         {
             return false;
         }
-        instruction( "X-Source-Paths", sourcePaths );
+        instruction( "X-Source-Paths", xSourcePaths );
         return true;
     }
 }
