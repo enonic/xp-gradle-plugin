@@ -1,7 +1,7 @@
 plugins {
     `maven-publish`
     `java-gradle-plugin`
-    id("com.gradle.plugin-publish") version "0.19.0"
+    id("com.gradle.plugin-publish") version "0.20.0"
 }
 
 version = "3.2.0-SNAPSHOT"
