@@ -12,7 +12,6 @@ import org.gradle.api.publish.maven.tasks.PublishToMavenRepository;
 import org.gradle.api.tasks.bundling.Jar;
 
 import aQute.bnd.gradle.BndBuilderPlugin;
-import aQute.bnd.gradle.BundleTaskConvention;
 
 import com.enonic.gradle.xp.BasePlugin;
 import com.enonic.gradle.xp.XpExtension;
@@ -43,15 +42,11 @@ public final class AppPlugin
         addLibraryConfig();
         addWebJarConfig();
         applyDeployTask();
-        applyUnpackWebJarTask();
     }
 
     private void afterEvaluate( final Project project )
     {
-        final Jar jar = (Jar) project.getTasks().getByName( "jar" );
-        final BundleTaskConvention ext = (BundleTaskConvention) jar.getConvention().getPlugins().get( "bundle" );
-
-        final boolean hasSourcePaths = new BundleConfigurator( project, ext ).configure( this.appExt );
+        final boolean hasSourcePaths = new BundleConfigurator( project ).configure( this.appExt );
 
         if ( !appExt.isKeepArchiveFileName() )
         {
@@ -78,12 +73,6 @@ public final class AppPlugin
     private void addWebJarConfig()
     {
         this.project.getConfigurations().create( "webjar", conf -> conf.setTransitive( true ) );
-    }
-
-    private void applyUnpackWebJarTask()
-    {
-        final UnpackWebJarTask task = this.project.getTasks().create( "unpackWebJars", UnpackWebJarTask.class );
-        this.project.getTasks().getByName( "jar" ).dependsOn( task );
     }
 
     private void skipJarVersion()
