@@ -12,8 +12,6 @@ public class XpExtension
 {
     private final Project project;
 
-    private final ObjectFactory objectFactory;
-
     private final Property<String> version;
 
     private final Property<File> homeDir;
@@ -23,7 +21,7 @@ public class XpExtension
     public XpExtension( final Project project )
     {
         this.project = project;
-        this.objectFactory = project.getObjects();
+        ObjectFactory objectFactory = project.getObjects();
         this.version = objectFactory.property( String.class );
         this.homeDir = objectFactory.property( File.class );
         this.installDir = objectFactory.property( File.class );

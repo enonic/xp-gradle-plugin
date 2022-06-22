@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 
-import aQute.bnd.gradle.BundleTaskConvention;
+import aQute.bnd.gradle.BundleTaskExtension;
 
 final class BundleConfigurator
 {
@@ -28,12 +28,12 @@ final class BundleConfigurator
 
     private final Project project;
 
-    private final BundleTaskConvention ext;
+    private final BundleTaskExtension ext;
 
-    BundleConfigurator( final Project project, final BundleTaskConvention ext )
+    BundleConfigurator( final Project project )
     {
         this.project = project;
-        this.ext = ext;
+        this.ext = (BundleTaskExtension) project.getTasks().getByName( "jar" ).getExtensions().getByName( "bundle" );
     }
 
     boolean configure( final AppExtension application )
@@ -81,8 +81,8 @@ final class BundleConfigurator
             instruction( entry.getKey(), entry.getValue() );
         }
 
-        includeWebJars();
         includeServiceLoader( filteredConfig );
+        includeWebJars();
 
         return addDevSourcePaths( application.getDevSourcePaths(), application.getRawDevSourcePaths() );
     }
@@ -110,22 +110,19 @@ final class BundleConfigurator
 
     private void includeWebJars()
     {
-        if ( this.project.getConfigurations().getByName( "webjar" ).isEmpty() )
-        {
-            return;
-        }
-
-        final File webjarsDir = new File( this.project.getBuildDir(), "webjars/META-INF/resources/webjars" );
-        instruction( "-includeresource.webjar", "assets=" + webjarsDir.getAbsolutePath().replace( File.separatorChar, '/' ) );
+        final Configuration webjarConfiguration = this.project.getConfigurations().getByName( "webjar" );
+        this.ext.classpath( webjarConfiguration );
+        webjarConfiguration.getFiles()
+            .forEach( file -> instruction( "-includeresource.webjar." + file.getName(),
+                                           "assets=" + "@" + file.getName() + "!/META-INF/resources/webjars/(*);rename:=$1" ) );
     }
 
     private void includeServiceLoader( final Configuration filteredConfig )
     {
-        String serviceloaderResources = filteredConfig.
-            getFiles().
-            stream().
-            map( file -> "@" + file.getName() + "!/META-INF/services/*" ).
-            collect( Collectors.joining( "," ) );
+        String serviceloaderResources = filteredConfig.getFiles()
+            .stream()
+            .map( file -> "@" + file.getName() + "!/META-INF/services/*" )
+            .collect( Collectors.joining( "," ) );
         if ( !serviceloaderResources.isBlank() )
         {
             instruction( "-includeresource.serviceloader", serviceloaderResources );
@@ -140,10 +137,10 @@ final class BundleConfigurator
             return false;
         }
         final Set<String> sourcePaths = new LinkedHashSet<>();
-        paths.stream().
-            map( File::getAbsolutePath ).
-            map( absolutePath -> absolutePath.replace( File.separatorChar, '/' ) ).
-            forEach( sourcePaths::add );
+        paths.stream()
+            .map( File::getAbsolutePath )
+            .map( absolutePath -> absolutePath.replace( File.separatorChar, '/' ) )
+            .forEach( sourcePaths::add );
         sourcePaths.addAll( rawPaths );
         final String xSourcePaths = String.join( ",", sourcePaths );
         if ( xSourcePaths.isBlank() )
