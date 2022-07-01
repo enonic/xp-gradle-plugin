@@ -13,15 +13,9 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           java-version: 11
-          distribution: 'adopt'
+          distribution: 'temurin'
+          cache: 'gradle'
 
-      - uses: actions/cache@v3.0.4
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - run: ./gradlew build
+      - run: ./gradlew build --no-daemon
 
       - uses: codecov/codecov-action@v3
