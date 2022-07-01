@@ -13,6 +13,6 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           java-version: 11
-          distribution: 'adopt'
+          distribution: 'temurin'
       - name: Publish
         run: ./gradlew build publishPlugins -Pgradle.publish.key=${{secrets.PLUGIN_PORTAL_KEY}} -Pgradle.publish.secret=${{secrets.PLUGIN_PORTAL_SECRET}}
