@@ -12,7 +12,7 @@ repositories {
 }
 
 dependencies {
-    implementation("biz.aQute.bnd:biz.aQute.bnd.gradle:6.3.1")
+    implementation("biz.aQute.bnd:biz.aQute.bnd.gradle:6.4.0")
 }
 
 gradlePlugin {
