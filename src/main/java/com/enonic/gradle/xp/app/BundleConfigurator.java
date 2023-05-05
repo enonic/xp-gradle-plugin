@@ -1,12 +1,19 @@
 package com.enonic.gradle.xp.app;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 import org.gradle.api.Project;
@@ -119,13 +126,83 @@ final class BundleConfigurator
 
     private void includeServiceLoader( final Configuration filteredConfig )
     {
+        final Path tempDirectory = createTempDirectory();
+
         String serviceloaderResources = filteredConfig.getFiles()
             .stream()
-            .map( file -> "@" + file.getName() + "!/META-INF/services/*" )
+            .map( this::createJarFile )
+            .flatMap( jarFile -> jarFile.stream()
+                .filter( jarEntry -> !jarEntry.isDirectory() )
+                .filter( jarEntry -> jarEntry.getName().startsWith( "META-INF/services/" ) )
+                .map( jarEntry -> createServiceFile( jarEntry, jarFile, tempDirectory ) ) )
+            .distinct()
+            .map( path -> "META-INF/services/" + path.toFile().getName() + "=" + path )
             .collect( Collectors.joining( "," ) );
+
         if ( !serviceloaderResources.isBlank() )
         {
             instruction( "-includeresource.serviceloader", serviceloaderResources );
+        }
+    }
+
+    private Path createServiceFile( final JarEntry jarEntry, final JarFile jarFile, final Path directory )
+    {
+        try
+        {
+            final Path filePath = Path.of( directory.toString(), jarEntry.getName().substring( jarEntry.getName().lastIndexOf( "/" ) + 1 ) );
+
+            if ( !Files.exists( filePath ) )
+            {
+                Files.createFile( filePath );
+            }
+
+            try (InputStream inputStream = jarFile.getInputStream( jarEntry );
+
+                 final FileOutputStream outputStream = new FileOutputStream( filePath.toFile(), true ))
+            {
+                copyStream( inputStream, outputStream );
+            }
+
+            return filePath;
+        }
+        catch ( Exception e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
+
+    private static Path createTempDirectory()
+    {
+        try
+        {
+            return Files.createTempDirectory( "services" );
+        }
+        catch ( IOException e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
+
+    private JarFile createJarFile( final File file )
+    {
+        try
+        {
+            return new JarFile( file );
+        }
+        catch ( IOException e )
+        {
+            throw new RuntimeException( e );
+        }
+    }
+
+    private void copyStream( InputStream input, FileOutputStream output )
+        throws IOException
+    {
+        byte[] buffer = new byte[4096];
+        int bytesRead;
+        while ( ( bytesRead = input.read( buffer ) ) != -1 )
+        {
+            output.write( buffer, 0, bytesRead );
         }
     }
 
