@@ -1,20 +1,22 @@
 package com.enonic.gradle.xp.app;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
@@ -130,13 +132,13 @@ final class BundleConfigurator
 
         String serviceloaderResources = filteredConfig.getFiles()
             .stream()
-            .map( this::createJarFile )
-            .flatMap( jarFile -> jarFile.stream()
-                .filter( jarEntry -> !jarEntry.isDirectory() )
-                .filter( jarEntry -> jarEntry.getName().startsWith( "META-INF/services/" ) )
-                .map( jarEntry -> createServiceFile( jarEntry, jarFile, tempDirectory ) ) )
+            .map( this::asZipFile )
+            .flatMap( zipFile -> zipFile.stream()
+                .filter( zipEntry -> !zipEntry.isDirectory() )
+                .filter( zipEntry -> zipEntry.getName().startsWith( "META-INF/services/" ) )
+                .map( zipEntry -> createServiceFile( zipEntry, zipFile, tempDirectory ) ) )
             .distinct()
-            .map( path -> "META-INF/services/" + path.toFile().getName() + "=" + path )
+            .map( path -> "META-INF/services/" + path.getFileName() + "=" + path.toString().replace( File.separatorChar, '/' ) )
             .collect( Collectors.joining( "," ) );
 
         if ( !serviceloaderResources.isBlank() )
@@ -145,29 +147,28 @@ final class BundleConfigurator
         }
     }
 
-    private Path createServiceFile( final JarEntry jarEntry, final JarFile jarFile, final Path directory )
+    private Path createServiceFile( final ZipEntry zipEntry, final ZipFile zipFile, final Path directory )
     {
         try
         {
-            final Path filePath = Path.of( directory.toString(), jarEntry.getName().substring( jarEntry.getName().lastIndexOf( "/" ) + 1 ) );
+            final Path filePath = directory.resolve( zipEntry.getName().substring( zipEntry.getName().lastIndexOf( "/" ) + 1 ) );
 
             if ( !Files.exists( filePath ) )
             {
                 Files.createFile( filePath );
             }
 
-            try (InputStream inputStream = jarFile.getInputStream( jarEntry );
-
-                 final FileOutputStream outputStream = new FileOutputStream( filePath.toFile(), true ))
+            try (InputStream inputStream = zipFile.getInputStream( zipEntry );
+                 OutputStream outputStream = Files.newOutputStream( filePath, StandardOpenOption.APPEND ) )
             {
-                copyStream( inputStream, outputStream );
+                inputStream.transferTo( outputStream );
             }
 
             return filePath;
         }
-        catch ( Exception e )
+        catch ( IOException e )
         {
-            throw new RuntimeException( e );
+            throw new UncheckedIOException( e );
         }
     }
 
@@ -179,30 +180,19 @@ final class BundleConfigurator
         }
         catch ( IOException e )
         {
-            throw new RuntimeException( e );
+            throw new UncheckedIOException( e );
         }
     }
 
-    private JarFile createJarFile( final File file )
+    private ZipFile asZipFile( final File file )
     {
         try
         {
-            return new JarFile( file );
+            return new ZipFile( file );
         }
         catch ( IOException e )
         {
-            throw new RuntimeException( e );
-        }
-    }
-
-    private void copyStream( InputStream input, FileOutputStream output )
-        throws IOException
-    {
-        byte[] buffer = new byte[4096];
-        int bytesRead;
-        while ( ( bytesRead = input.read( buffer ) ) != -1 )
-        {
-            output.write( buffer, 0, bytesRead );
+            throw new UncheckedIOException( e );
         }
     }
 
