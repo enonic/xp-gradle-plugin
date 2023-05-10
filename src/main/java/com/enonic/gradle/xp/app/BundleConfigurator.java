@@ -162,6 +162,7 @@ final class BundleConfigurator
                  OutputStream outputStream = Files.newOutputStream( filePath, StandardOpenOption.APPEND ) )
             {
                 inputStream.transferTo( outputStream );
+                outputStream.write( '\n' );
             }
 
             return filePath;
