@@ -36,4 +36,5 @@ apply plugin: 'com.enonic.xp.app'
 
 ## Releasing
 
-To release a new version of the plugin, change the version in `build.gradle` (for instance `version = "3.3.0"`, tag the commit with the version number (for instance `git tag v3.3.0`) and push to GitHub (`git push origin v3.3.0`).
+To release a new version of the plugin, change the version in `build.gradle` (for instance `version = "3.3.0"`, 
+tag the commit with the version number (for instance `git tag v3.3.0`) and push to GitHub (`git push --follow-tags`).
