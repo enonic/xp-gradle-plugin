@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -45,19 +44,9 @@ final class BundleConfigurator
         this.ext = (BundleTaskExtension) project.getTasks().getByName( "jar" ).getExtensions().getByName( "bundle" );
     }
 
-    boolean configure( final AppExtension application )
+    boolean configure( final AppExtension application, final XpVersion xpVersion )
     {
-        final String version = Objects.requireNonNullElse( application.getSystemVersion(), "" ).trim();
-        if ( version.isEmpty() )
-        {
-            throw new IllegalArgumentException(
-                "XP system version not specified. Please add the following line in the 'app' closure in build.gradle:\r\n  systemVersion = \"${xpVersion}\"" );
-        }
-        final XpVersion xpVersion = XpVersion.parse( version );
-        if ( !xpVersion.valid )
-        {
-            throw new IllegalArgumentException( "Invalid XP system version: systemVersion = '" + version + "'" );
-        }
+
 
         validateApplicationName( application.getName() );
 
