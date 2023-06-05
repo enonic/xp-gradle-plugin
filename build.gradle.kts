@@ -16,10 +16,8 @@ dependencies {
     testImplementation("org.mockito:mockito-junit-jupiter:5.3.1")
 }
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(11))
-    }
+tasks.compileJava {
+    options.release.set(11)
 }
 
 tasks.named<Test>("test") {
