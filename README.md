@@ -13,7 +13,7 @@ To build and publish the plugin to your local maven repository, run `.\gradlew p
 
 To use the locally built plugin in your project comment out the plugin line in your `build.gradle` file:
 ```
-id 'com.enonic.xp.app' version '3.3.0'
+id 'com.enonic.xp.app' version '3.4.0'
 ```
 
 and add the following to your `build.gradle` file:
@@ -27,7 +27,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "com.enonic.gradle:xp-gradle-plugin:3.3.0-SNAPSHOT"
+        classpath "com.enonic.gradle:xp-gradle-plugin:3.4.0-SNAPSHOT"
     }
 }
 
