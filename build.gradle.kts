@@ -11,7 +11,7 @@ repositories {
 
 dependencies {
     implementation("biz.aQute.bnd:biz.aQute.bnd.gradle:6.4.0")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
     testImplementation("org.mockito:mockito-core:5.6.0")
     testImplementation("org.mockito:mockito-junit-jupiter:5.7.0")
 }
