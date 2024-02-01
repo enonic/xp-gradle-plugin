@@ -18,4 +18,4 @@ jobs:
 
       - run: ./gradlew build --no-daemon
 
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
