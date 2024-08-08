@@ -27,28 +27,36 @@ final class DependenciesConfigurator
 
     private void apply()
     {
-        config.resolutionStrategy(r -> r.eachDependency( details -> {
+        config.resolutionStrategy( r -> r.eachDependency( details -> {
             final ModuleVersionSelector requested = details.getRequested();
-            if ( requested.getGroup().equals( "com.enonic.xp" ) && requested.getName().startsWith( "lib-" ) )
+            if ( requested.getGroup().equals( "com.enonic.xp" ) )
             {
-                final String requestedVersion = requested.getVersion();
-                if ( requestedVersion != null )
+                if ( requested.getName().startsWith( "lib-" ) )
                 {
-                    final XpVersion requestedXpVersion = XpVersion.parse( requestedVersion );
-                    if ( requestedXpVersion.major != systemVersion.major || requestedXpVersion.minor > systemVersion.minor ||
-                        ( requestedXpVersion.minor == systemVersion.minor && requestedXpVersion.patch > systemVersion.patch ) )
+                    final String requestedVersion = requested.getVersion();
+                    if ( requestedVersion != null )
                     {
-                        throw new IllegalStateException(
-                            "Requested " + requested.getName() + " from dependencies is incompatible with app systemVersion " +
-                                systemVersion.version );
-                    }
-                    else
-                    {
-                        details.useVersion( systemVersion.version );
+                        final XpVersion requestedXpVersion = XpVersion.parse( requestedVersion );
+                        if ( requestedXpVersion.major != systemVersion.major || requestedXpVersion.minor > systemVersion.minor ||
+                            ( requestedXpVersion.minor == systemVersion.minor && requestedXpVersion.patch > systemVersion.patch ) )
+                        {
+                            throw new IllegalStateException(
+                                "Included dependency " + requested.getGroup() + ":" + requested.getName() + ":" + requested.getVersion() +
+                                    " is incompatible with app systemVersion " + systemVersion.version );
+                        }
+                        else
+                        {
+                            details.useVersion( systemVersion.version );
+                        }
                     }
                 }
+                else
+                {
+                    throw new IllegalStateException(
+                        "Included dependency " + requested.getGroup() + ":" + requested.getName() + " is not a library" );
+                }
             }
-        } ));
+        } ) );
 
         addExclude( "org.slf4j", null );
         addExclude( "org.osgi", null );
