@@ -14,11 +14,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.file.SourceDirectorySet;
+import org.gradle.api.tasks.SourceSetContainer;
 
 import aQute.bnd.gradle.BundleTaskExtension;
 
@@ -46,8 +49,6 @@ final class BundleConfigurator
 
     boolean configure( final AppExtension application, final XpVersion xpVersion )
     {
-
-
         validateApplicationName( application.getName() );
 
         final Configuration libConfig = this.project.getConfigurations().getByName( "include" );
@@ -118,6 +119,32 @@ final class BundleConfigurator
     private void includeServiceLoader( final Configuration filteredConfig )
     {
         final Path tempDirectory = createTempDirectory();
+
+        final SourceSetContainer sourceSets = (SourceSetContainer) project.getExtensions().getByName( "sourceSets" );
+        final SourceDirectorySet mainSourceSet = sourceSets.getByName( "main" ).getAllSource();
+
+        mainSourceSet.getSrcDirs().forEach( sourceDir -> {
+            try (Stream<Path> walk = Files.walk( sourceDir.toPath() ))
+            {
+                walk.filter( Files::isRegularFile )
+                    .filter( path -> sourceDir.toPath().relativize( path ).startsWith( "META-INF/services/" ) )
+                    .forEach( path -> {
+                        final Path filePath = tempDirectory.resolve( path.getFileName() );
+                        try
+                        {
+                            Files.copy( path, filePath );
+                        }
+                        catch ( IOException e )
+                        {
+                            throw new RuntimeException( e );
+                        }
+                    } );
+            }
+            catch ( IOException e )
+            {
+                throw new UncheckedIOException( e );
+            }
+        } );
 
         String serviceloaderResources = filteredConfig.getFiles()
             .stream()

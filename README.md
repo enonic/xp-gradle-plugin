@@ -9,7 +9,7 @@ For Enonic XP 6.x, use version 1.2.0.
 
 ## Development
 
-To build and publish the plugin to your local maven repository, run `.\gradlew publishToMavenLocal`
+To build and publish the plugin to your local maven repository, run `./gradlew publishToMavenLocal`
 
 To use the locally built plugin in your project comment out the plugin line in your `build.gradle` file:
 ```
