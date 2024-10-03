@@ -124,6 +124,9 @@ final class BundleConfigurator
         final SourceDirectorySet mainSourceSet = sourceSets.getByName( "main" ).getAllSource();
 
         mainSourceSet.getSrcDirs().forEach( sourceDir -> {
+            if ( !sourceDir.exists() ) {
+                return;
+            }
             try (Stream<Path> walk = Files.walk( sourceDir.toPath() ))
             {
                 walk.filter( Files::isRegularFile )
