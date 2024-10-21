@@ -12,7 +12,7 @@ repositories {
 dependencies {
     implementation("biz.aQute.bnd:biz.aQute.bnd.gradle:6.4.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.11.2")
-    testImplementation("org.mockito:mockito-junit-jupiter:5.14.1")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.14.2")
 }
 
 tasks.compileJava {
