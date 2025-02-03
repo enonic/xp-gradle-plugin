@@ -1,5 +1,5 @@
 plugins {
-    id("com.gradle.plugin-publish") version "1.3.0"
+    id("com.gradle.plugin-publish") version "1.3.1"
 }
 
 version = "3.5.3-SNAPSHOT"
