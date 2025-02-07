@@ -70,10 +70,10 @@ final class BundleConfigurator
         instruction( "X-Application-Url", application.getUrl() );
         instruction( "X-Vendor-Name", application.getVendorName() );
         instruction( "X-Vendor-Url", application.getVendorUrl() );
-        instruction( "X-System-Version",
-                     String.format( "[%s.%s,%s)", xpVersion.major, xpVersion.minor, Math.addExact( xpVersion.major, 1 ) ) );
+        instruction( "X-System-Version", xpVersion.range );
         instruction( "X-Bundle-Type", application.isSystemApp() ? SYSTEM_BUNDLE_TYPE : APPLICATION_BUNDLE_TYPE );
         instruction( "X-Capability", String.join( ",", application.getCapabilities() ) );
+        instruction( "X-Script-Engine", application.getScriptEngine() );
 
         for ( final Map.Entry<String, String> entry : instructions.entrySet() )
         {

@@ -28,10 +28,12 @@ public class AppExtension
 
     private String systemVersion;
 
+    private String scriptEngine;
+
     private final Map<String, String> instructions;
 
     private List<File> devSourcePaths;
-    
+
     private List<String> rawDevSourcePaths;
 
     private boolean systemApp;
@@ -114,6 +116,16 @@ public class AppExtension
     public void setSystemVersion( final String systemVersion )
     {
         this.systemVersion = systemVersion;
+    }
+
+    public String getScriptEngine()
+    {
+        return scriptEngine;
+    }
+
+    public void setScriptEngine( final String scriptEngine )
+    {
+        this.scriptEngine = scriptEngine;
     }
 
     public List<File> getDevSourcePaths()

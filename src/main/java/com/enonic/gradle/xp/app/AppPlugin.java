@@ -119,29 +119,31 @@ public final class AppPlugin
 
     static void ensureCorrectJavaCompilerVersion( Project project, final XpVersion xpVersion )
     {
-        // XP 7.12 and below requires Java 11.
-
-        if ( xpVersion.major != 7 )
+        if ( xpVersion.major < 7 )
         {
-            // Don't know how to handle this
-            return;
+            throw new IllegalStateException( "XP below version 7.0 are not supported" );
         }
-        final JavaCompile javaCompile = (JavaCompile) project.getTasks().findByName( "compileJava" );
-        if ( javaCompile != null )
+
+        if (xpVersion.major == 7)
         {
-            final Property<Integer> release = javaCompile.getOptions().getRelease();
-            if ( xpVersion.minor <= 12 )
+            // XP 7.12 and below requires Java 11.
+            final JavaCompile javaCompile = (JavaCompile) project.getTasks().findByName( "compileJava" );
+            if ( javaCompile != null )
             {
-                if ( release.isPresent() )
+                final Property<Integer> release = javaCompile.getOptions().getRelease();
+                if ( xpVersion.minor <= 12 )
                 {
-                    if ( release.get() > 11 )
+                    if ( release.isPresent() )
                     {
-                        throw new IllegalStateException( "XP 7.12 and below requires Java 11" );
+                        if ( release.get() > 11 )
+                        {
+                            throw new IllegalStateException( "XP 7.12 and below requires Java 11" );
+                        }
                     }
-                }
-                else
-                {
-                    release.set( 11 );
+                    else
+                    {
+                        release.set( 11 );
+                    }
                 }
             }
         }
