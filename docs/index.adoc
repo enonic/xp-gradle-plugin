@@ -12,7 +12,7 @@ To install this plugin for Enonic XP 7.x, just add the following to your `build.
 [source,groovy]
 ----
 plugins {
-  id 'com.enonic.xp.base' version '3.4.0'
+  id 'com.enonic.xp.base' version '3.6.0'
 }
 ----
 
@@ -50,7 +50,7 @@ To install this plugin for Enonic XP 7.x, just add the following to your `build.
 [source,groovy]
 ----
 plugins {
-  id 'com.enonic.xp.app' version '3.4.0'
+  id 'com.enonic.xp.app' version '3.6.1'
 }
 ----
 
