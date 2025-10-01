@@ -13,7 +13,7 @@ To build and publish the plugin to your local maven repository, run `./gradlew p
 
 To use the locally built plugin in your project comment out the plugin line in your `build.gradle` file:
 ```
-id 'com.enonic.xp.app' version '3.6.1'
+id 'com.enonic.xp.app' version '3.6.2'
 ```
 
 and add the following to your `build.gradle` file:
