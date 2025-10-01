@@ -23,7 +23,7 @@ buildscript {
         mavenLocal()
         gradlePluginPortal()
         maven {
-            url 'https://repo.enonic.com/public'
+            url = 'https://repo.enonic.com/public'
         }
     }
     dependencies {

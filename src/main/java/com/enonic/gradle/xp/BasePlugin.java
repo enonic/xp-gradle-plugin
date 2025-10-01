@@ -13,7 +13,7 @@ public final class BasePlugin
     {
         final XpExtension ext = XpExtension.create( project );
         ext.setVersion( "7.+" );
-        ext.setInstallDir( new File( project.getBuildDir(), "xp" ) );
+        ext.setInstallDir( project.getLayout().getBuildDirectory().dir( "xp" ).get().getAsFile() );
         ext.setHomeDir( findHomeDir( ext.getInstallDir(), project.findProperty( "xpHome" ) ) );
     }
 

@@ -50,8 +50,8 @@ public class AppExtension
         this.instructions = new HashMap<>();
 
         this.devSourcePaths = new ArrayList<>();
-        addDevSourcePath( this.project.getProjectDir(), "src", "main", "resources" );
-        addDevSourcePath( this.project.getBuildDir(), "resources", "main" );
+        this.devSourcePaths.add( this.project.getLayout().getProjectDirectory().dir( "src/main/resources" ).getAsFile() );
+        this.devSourcePaths.add( this.project.getLayout().getBuildDirectory().get().dir( "resources/main" ).getAsFile() );
 
         this.rawDevSourcePaths = new ArrayList<>();
 
@@ -175,13 +175,7 @@ public class AppExtension
             return this.project.getName();
         }
 
-        return this.project.getGroup().toString() + "." + this.project.getName();
-    }
-
-    private void addDevSourcePath( final File root, final String... paths )
-    {
-        final File file = new File( root, String.join( String.valueOf( File.separatorChar ), paths ) );
-        this.devSourcePaths.add( file );
+        return this.project.getGroup() + "." + this.project.getName();
     }
 
     public boolean isSystemApp()

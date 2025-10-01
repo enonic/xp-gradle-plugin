@@ -82,7 +82,7 @@ public final class AppPlugin
 
     private void applyDeployTask()
     {
-        project.getTasks().create( "deploy", DeployTask.class );
+        project.getTasks().register( "deploy", DeployTask.class );
         project.getTasks().withType( DeployTask.class, task -> task.setHomeDir( ext.getHomeDirProvider() ) );
     }
 

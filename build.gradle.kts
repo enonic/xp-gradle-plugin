@@ -19,7 +19,7 @@ dependencies {
     testImplementation(libs.mockito.jupiter)
 }
 
-tasks.compileJava {
+tasks.withType<JavaCompile>().configureEach {
     options.release.set(11)
 }
 

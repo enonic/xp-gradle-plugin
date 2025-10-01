@@ -33,7 +33,7 @@ public class DeployTask
     private File resolveHomeDir()
     {
         final File file = this.homeDir.getOrNull();
-        return file != null ? file : getProject().getBuildDir();
+        return file != null ? file : getProject().getLayout().getBuildDirectory().get().getAsFile();
     }
 
     @OutputDirectory
