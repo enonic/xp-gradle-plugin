@@ -521,7 +521,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">plugins {
-  id 'com.enonic.xp.app' version '3.6.1'
+  id 'com.enonic.xp.app' version '3.6.2'
 }</code></pre>
 </div>
 </div>
@@ -694,7 +694,7 @@ You need to set it when publishing the application to Maven repository.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-10 10:21:04 UTC
+Last updated 2025-10-01 09:11:28 UTC
 </div>
 </div>
 </body>
