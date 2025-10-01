@@ -1,0 +1,16 @@
+[versions]
+
+
+[libraries]
+
+bnd-gradle = { module = "biz.aQute.bnd:biz.aQute.bnd.gradle", version = "6.4.0" }
+
+junit-bom = { module = "org.junit:junit-bom", version = "5.12.2" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
+junit-launcher = { module = "org.junit.platform:junit-platform-launcher" }
+
+mockito-bom = { module = "org.mockito:mockito-bom", version = "5.18.0" }
+mockito-jupiter = { module = "org.mockito:mockito-junit-jupiter" }
+
+[plugins]
+plugin-publish = { id = "com.gradle.plugin-publish", version = "2.0.0" }

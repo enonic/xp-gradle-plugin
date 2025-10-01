@@ -1,5 +1,5 @@
 plugins {
-    id("com.gradle.plugin-publish") version "2.0.0"
+    alias(libs.plugins.plugin.publish)
 }
 
 version = "3.6.2-SNAPSHOT"
@@ -10,9 +10,13 @@ repositories {
 }
 
 dependencies {
-    implementation("biz.aQute.bnd:biz.aQute.bnd.gradle:6.4.0")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
-    testImplementation("org.mockito:mockito-junit-jupiter:5.18.0")
+    implementation(libs.bnd.gradle)
+
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(platform(libs.mockito.bom))
+    testImplementation(libs.junit.jupiter)
+    testRuntimeOnly(libs.junit.launcher)
+    testImplementation(libs.mockito.jupiter)
 }
 
 tasks.compileJava {
