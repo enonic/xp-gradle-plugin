@@ -151,6 +151,7 @@ final class BundleConfigurator
 
         String serviceloaderResources = filteredConfig.getFiles()
             .stream()
+            .filter( File::exists )
             .map( this::asZipFile )
             .flatMap( zipFile -> zipFile.stream()
                 .filter( zipEntry -> !zipEntry.isDirectory() )
