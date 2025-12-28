@@ -36,6 +36,11 @@ public class XpExtension
     {
         return this.version;
     }
+    
+    public Property<String> getVersionProperty()
+    {
+        return this.version;
+    }
 
     public void setVersion( final String version )
     {
@@ -51,6 +56,11 @@ public class XpExtension
     {
         return this.homeDir;
     }
+    
+    public Property<File> getHomeDirProperty()
+    {
+        return this.homeDir;
+    }
 
     public void setHomeDir( final File dir )
     {
@@ -63,6 +73,11 @@ public class XpExtension
     }
 
     public Provider<File> getInstallDirProvider()
+    {
+        return this.installDir;
+    }
+    
+    public Property<File> getInstallDirProperty()
     {
         return this.installDir;
     }

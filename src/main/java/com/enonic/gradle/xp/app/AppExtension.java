@@ -33,6 +33,8 @@ public class AppExtension
     private final Map<String, String> instructions;
 
     private List<File> devSourcePaths;
+    
+    private boolean devSourcePathsInitialized = false;
 
     private List<String> rawDevSourcePaths;
 
@@ -50,9 +52,8 @@ public class AppExtension
         this.instructions = new HashMap<>();
 
         this.devSourcePaths = new ArrayList<>();
-        this.devSourcePaths.add( this.project.getLayout().getProjectDirectory().dir( "src/main/resources" ).getAsFile() );
-        this.devSourcePaths.add( this.project.getLayout().getBuildDirectory().get().dir( "resources/main" ).getAsFile() );
-
+        // Don't initialize default paths here - defer until first access to avoid eager build directory resolution
+        
         this.rawDevSourcePaths = new ArrayList<>();
 
         this.capabilities = new HashSet<>();
@@ -130,12 +131,28 @@ public class AppExtension
 
     public List<File> getDevSourcePaths()
     {
+        initializeDevSourcePathsIfNeeded();
         return this.devSourcePaths;
+    }
+    
+    private void initializeDevSourcePathsIfNeeded()
+    {
+        if ( !this.devSourcePathsInitialized )
+        {
+            // Only add default paths if the list is still empty (user hasn't set custom paths)
+            if ( this.devSourcePaths.isEmpty() )
+            {
+                this.devSourcePaths.add( this.project.getLayout().getProjectDirectory().dir( "src/main/resources" ).getAsFile() );
+                this.devSourcePaths.add( this.project.getLayout().getBuildDirectory().get().dir( "resources/main" ).getAsFile() );
+            }
+            this.devSourcePathsInitialized = true;
+        }
     }
 
     public void setDevSourcePaths( final List<File> devSourcePaths )
     {
         this.devSourcePaths = devSourcePaths;
+        this.devSourcePathsInitialized = true;  // Mark as initialized since user provided custom paths
     }
 
     public List<String> getRawDevSourcePaths()
