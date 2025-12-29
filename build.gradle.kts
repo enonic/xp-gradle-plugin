@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.plugin.publish)
 }
 
-version = "3.6.3-SNAPSHOT"
+version = "4.0.0-SNAPSHOT"
 group = "com.enonic.gradle"
 
 repositories {
@@ -19,8 +19,10 @@ dependencies {
     testImplementation(libs.mockito.jupiter)
 }
 
-tasks.withType<JavaCompile>().configureEach {
-    options.release.set(11)
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 tasks.named<Test>("test") {
