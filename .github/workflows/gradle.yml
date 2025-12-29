@@ -12,11 +12,12 @@ jobs:
 
       - uses: actions/setup-java@v5
         with:
-          java-version: 11
-          distribution: 'temurin'
-          cache: 'gradle'
+          distribution: temurin
+          java-version: 21
 
-      - run: ./gradlew build --no-daemon
+      - uses: gradle/actions/setup-gradle@v5
+
+      - run: ./gradlew build
 
       - uses: codecov/codecov-action@v5
         with:
