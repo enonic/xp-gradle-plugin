@@ -41,4 +41,4 @@ apply plugin: 'com.enonic.xp.app'
 To release a new version of the plugin, change the version in `build.gradle.kts` (for instance `version = "4.0.0"`, 
 tag the commit with the version number (for instance `git tag v4.0.0`) and push to GitHub (`git push --follow-tags`).
 
-After the release is done, update the version in `build.gradle.kts` to the next snapshot version (for instance `version = "4.4.1-SNAPSHOT"`).
+After the release is done, update the version in `build.gradle.kts` to the next snapshot version (for instance `version = "4.0.1-SNAPSHOT"`).
