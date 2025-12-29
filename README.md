@@ -7,13 +7,15 @@
 
 For Enonic XP 6.x, use version 1.2.0.
 
+For Enonic XP 7.x, use version 3.6.2.
+
 ## Development
 
 To build and publish the plugin to your local maven repository, run `./gradlew publishToMavenLocal`
 
 To use the locally built plugin in your project comment out the plugin line in your `build.gradle` file:
 ```
-id 'com.enonic.xp.app' version '3.6.2'
+id 'com.enonic.xp.app' version '4.0.0-A1'
 ```
 
 and add the following to your `build.gradle` file:
@@ -27,7 +29,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "com.enonic.gradle:xp-gradle-plugin:3.4.0-SNAPSHOT"
+        classpath "com.enonic.gradle:xp-gradle-plugin:4.0.0-SNAPSHOT"
     }
 }
 
@@ -36,7 +38,7 @@ apply plugin: 'com.enonic.xp.app'
 
 ## Releasing
 
-To release a new version of the plugin, change the version in `build.gradle.kts` (for instance `version = "3.3.0"`, 
-tag the commit with the version number (for instance `git tag v3.3.0`) and push to GitHub (`git push --follow-tags`).
+To release a new version of the plugin, change the version in `build.gradle.kts` (for instance `version = "4.0.0"`, 
+tag the commit with the version number (for instance `git tag v4.0.0`) and push to GitHub (`git push --follow-tags`).
 
-After the release is done, update the version in `build.gradle.kts` to the next snapshot version (for instance `version = "3.3.1-SNAPSHOT"`).
+After the release is done, update the version in `build.gradle.kts` to the next snapshot version (for instance `version = "4.4.1-SNAPSHOT"`).
