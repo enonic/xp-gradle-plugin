@@ -32,7 +32,7 @@ public class XpExtension
         return this.version.get();
     }
 
-    public Provider<String> getVersionProvider()
+    public Property<String> getVersionProperty()
     {
         return this.version;
     }
@@ -47,7 +47,7 @@ public class XpExtension
         return this.homeDir.get();
     }
 
-    public Provider<File> getHomeDirProvider()
+    public Property<File> getHomeDirProperty()
     {
         return this.homeDir;
     }
@@ -62,7 +62,7 @@ public class XpExtension
         return this.installDir.get();
     }
 
-    public Provider<File> getInstallDirProvider()
+    public Property<File> getInstallDirProperty()
     {
         return this.installDir;
     }
