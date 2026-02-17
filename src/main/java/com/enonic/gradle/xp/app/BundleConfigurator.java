@@ -219,8 +219,7 @@ final class BundleConfigurator
 
     private boolean addDevSourcePaths( final List<File> paths, final List<String> rawPaths )
     {
-        final Object property = project.findProperty( "com.enonic.xp.app.production" );
-        if ( "true".equals( property ) || Boolean.TRUE.equals( property ) )
+        if ( !"dev".equals( project.getProviders().gradleProperty( "env" ).getOrNull() ) )
         {
             return false;
         }

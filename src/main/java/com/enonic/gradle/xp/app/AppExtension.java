@@ -44,6 +44,10 @@ public class AppExtension
 
     private boolean allowDevSourcePathsPublishing;
 
+    private boolean createDefaultDevTask = true;
+
+    private String continuousTaskName = "deploy";
+
     private final Set<String> capabilities;
 
     public AppExtension( final Project project )
@@ -223,6 +227,26 @@ public class AppExtension
     public void setAllowDevSourcePathsPublishing( final boolean allowDevSourcePathsPublishing )
     {
         this.allowDevSourcePathsPublishing = allowDevSourcePathsPublishing;
+    }
+
+    public boolean isCreateDefaultDevTask()
+    {
+        return createDefaultDevTask;
+    }
+
+    public void setCreateDefaultDevTask( final boolean createDefaultDevTask )
+    {
+        this.createDefaultDevTask = createDefaultDevTask;
+    }
+
+    public String getContinuousTaskName()
+    {
+        return continuousTaskName;
+    }
+
+    public void setContinuousTaskName( final String continuousTaskName )
+    {
+        this.continuousTaskName = continuousTaskName;
     }
 
     public static AppExtension get( final Project project )
