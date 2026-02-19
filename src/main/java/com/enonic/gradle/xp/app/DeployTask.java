@@ -1,45 +1,46 @@
 package com.enonic.gradle.xp.app;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+
+import javax.inject.Inject;
 
 import org.gradle.api.DefaultTask;
-import org.gradle.api.file.CopySpec;
+import org.gradle.api.file.FileSystemOperations;
+import org.gradle.api.file.RegularFileProperty;
+import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
-import org.gradle.api.tasks.InputFile;
-import org.gradle.api.tasks.OutputDirectory;
+import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.TaskAction;
-import org.gradle.api.tasks.bundling.Jar;
 
 public class DeployTask
     extends DefaultTask
 {
+    private final FileSystemOperations fileSystemOperations;
+
     private final Property<File> homeDir;
 
-    public DeployTask()
+    private final RegularFileProperty from;
+
+    @Inject
+    public DeployTask( final FileSystemOperations fileSystemOperations, final ObjectFactory objects )
     {
+        this.fileSystemOperations = fileSystemOperations;
+        this.homeDir = objects.property( File.class );
+        this.from = objects.fileProperty();
         setGroup( "Application" );
         setDescription( "Deploy application to XP_HOME directory." );
-        dependsOn( getProject().getTasks().getByName( "build" ) );
-        this.homeDir = getProject().getObjects().property( File.class );
+        dependsOn( "jar" );
+        getOutputs().upToDateWhen( task -> false );
     }
 
-    @InputFile
-    public File getFrom()
+    @Internal
+    public RegularFileProperty getFrom()
     {
-        return ( (Jar) getProject().getTasks().getByPath( "jar" ) ).getArchiveFile().get().getAsFile();
-    }
-
-    private File resolveHomeDir()
-    {
-        final File file = this.homeDir.getOrNull();
-        return file != null ? file : getProject().getLayout().getBuildDirectory().get().getAsFile();
-    }
-
-    @OutputDirectory
-    public File getDeployDir()
-    {
-        return new File( resolveHomeDir(), "deploy" );
+        return from;
     }
 
     public void setHomeDir( final Provider<File> dir )
@@ -50,12 +51,40 @@ public class DeployTask
     @TaskAction
     public void run()
     {
-        getProject().copy( this::doCopy );
+        final File source = getFrom().get().getAsFile();
+        final File deployDir = new File( homeDir.get(), "deploy" );
+        final File destination = new File( deployDir, source.getName() );
+
+        if ( isIdentical( source, destination ) )
+        {
+            getLogger().lifecycle( "Skipping deploy of '{}', already up-to-date", source.getName() );
+            return;
+        }
+
+        getLogger().lifecycle( "Deploying '{}' to '{}'", source.getName(), deployDir );
+        fileSystemOperations.copy( spec -> {
+            spec.from( source );
+            spec.into( deployDir );
+        } );
     }
 
-    private void doCopy( final CopySpec spec )
+    private static boolean isIdentical( final File source, final File destination )
     {
-        spec.from( getFrom() );
-        spec.into( getDeployDir() );
+        if ( !destination.exists() )
+        {
+            return false;
+        }
+        if ( source.length() != destination.length() )
+        {
+            return false;
+        }
+        try
+        {
+            return Files.mismatch( source.toPath(), destination.toPath() ) == -1;
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
     }
 }

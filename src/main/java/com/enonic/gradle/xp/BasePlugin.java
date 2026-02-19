@@ -15,28 +15,12 @@ public final class BasePlugin
         final XpExtension ext = XpExtension.create( project );
         ext.setVersion( "8.+" );
         ext.getInstallDirProperty().set( project.getLayout().getBuildDirectory().dir( "xp" ).map( Directory::getAsFile ) );
-        ext.getHomeDirProperty().set( ext.getInstallDirProperty().map( installDir -> findHomeDir( installDir, project.findProperty( "xpHome" ) ) ) );
-    }
-
-    private static File findHomeDir( final File installDir, final Object xpHomeProp )
-    {
-        if ( xpHomeProp != null )
-        {
-            return new File( xpHomeProp.toString() );
-        }
-
-        final String propValue = System.getProperty( "xp.home" );
-        if ( propValue != null )
-        {
-            return new File( propValue );
-        }
-
-        final String envValue = System.getenv( "XP_HOME" );
-        if ( envValue != null )
-        {
-            return new File( envValue );
-        }
-
-        return new File( installDir, "home" );
+        ext.getHomeDirProperty().set(
+            project.getProviders().gradleProperty( "xpHome" )
+                .orElse( project.getProviders().systemProperty( "xp.home" ) )
+                .orElse( project.getProviders().environmentVariable( "XP_HOME" ) )
+                .map( File::new )
+                .orElse( ext.getInstallDirProperty().map( installDir -> new File( installDir, "home" ) ) )
+        );
     }
 }

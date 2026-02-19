@@ -9,10 +9,8 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.plugins.JavaPlugin;
-import org.gradle.api.provider.Property;
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository;
 import org.gradle.api.tasks.bundling.Jar;
-import org.gradle.api.tasks.compile.JavaCompile;
 
 import aQute.bnd.gradle.BndBuilderPlugin;
 
@@ -45,6 +43,7 @@ public final class AppPlugin
         addLibraryConfig();
         addWebJarConfig();
         applyDeployTask();
+        applyDevTask();
     }
 
     private void afterEvaluate( final Project project )
@@ -83,7 +82,25 @@ public final class AppPlugin
     private void applyDeployTask()
     {
         project.getTasks().register( "deploy", DeployTask.class );
-        project.getTasks().withType( DeployTask.class, task -> task.setHomeDir( ext.getHomeDirProperty() ) );
+        project.getTasks().withType( DeployTask.class, task -> {
+            task.setHomeDir( ext.getHomeDirProperty() );
+            task.getFrom().set( project.getTasks().named( "jar", Jar.class ).flatMap( Jar::getArchiveFile ) );
+        } );
+    }
+
+    private void applyDevTask()
+    {
+        project.afterEvaluate( p -> {
+            if ( appExt.isCreateDefaultDevTask() )
+            {
+                p.getTasks().register( "dev", DevTask.class, task -> {
+                    final String taskName = appExt.getContinuousTaskName();
+                    final String projectPath = p.getPath();
+                    final String qualifiedTaskName = ":".equals( projectPath ) ? taskName : projectPath + ":" + taskName;
+                    task.getContinuousTaskName().set( qualifiedTaskName );
+                } );
+            }
+        } );
     }
 
     private void addLibraryConfig()
@@ -113,39 +130,15 @@ public final class AppPlugin
     {
         project.getTasks().withType( PublishToMavenRepository.class ).all( task -> task.doFirst( t -> {
             throw new IllegalStateException( "Application has non-empty X-Source-Paths. " +
-                                                 "Build application with com.enonic.xp.app.production property to true for publishing." );
+                                                 "Build application without -Pdev property for publishing." );
         } ) );
     }
 
     static void ensureCorrectJavaCompilerVersion( Project project, final XpVersion xpVersion )
     {
-        if ( xpVersion.major < 7 )
+        if ( xpVersion.major < 8 )
         {
-            throw new IllegalStateException( "XP below version 7.0 are not supported" );
-        }
-
-        if (xpVersion.major == 7)
-        {
-            // XP 7.12 and below requires Java 11.
-            final JavaCompile javaCompile = (JavaCompile) project.getTasks().findByName( "compileJava" );
-            if ( javaCompile != null )
-            {
-                final Property<Integer> release = javaCompile.getOptions().getRelease();
-                if ( xpVersion.minor <= 12 )
-                {
-                    if ( release.isPresent() )
-                    {
-                        if ( release.get() > 11 )
-                        {
-                            throw new IllegalStateException( "XP 7.12 and below requires Java 11" );
-                        }
-                    }
-                    else
-                    {
-                        release.set( 11 );
-                    }
-                }
-            }
+            throw new IllegalStateException( "XP below version 8.0 are not supported" );
         }
     }
 }

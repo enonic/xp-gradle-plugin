@@ -5,9 +5,9 @@
 
 [Documentation](docs/index.adoc)
 
-For Enonic XP 6.x, use version 1.2.0.
-
 For Enonic XP 7.x, use version 3.6.2.
+
+For Enonic XP 8.x, use version 4.0.0 or later.
 
 ## Development
 
@@ -18,7 +18,7 @@ To use the locally built plugin in your project comment out the plugin line in y
 id 'com.enonic.xp.app' version '4.0.0-A1'
 ```
 
-and add the following to your `build.gradle` file:
+add the following to the top of your `build.gradle` file:
 ```groovy
 buildscript {
     repositories {
@@ -32,7 +32,10 @@ buildscript {
         classpath "com.enonic.gradle:xp-gradle-plugin:4.0.0-SNAPSHOT"
     }
 }
+```
 
+and add the following after plugins section in your `build.gradle` file:
+```
 apply plugin: 'com.enonic.xp.app'
 ```
 
