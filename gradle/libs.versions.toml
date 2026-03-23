@@ -13,4 +13,4 @@ mockito-bom = { module = "org.mockito:mockito-bom", version = "5.23.0" }
 mockito-jupiter = { module = "org.mockito:mockito-junit-jupiter" }
 
 [plugins]
-plugin-publish = { id = "com.gradle.plugin-publish", version = "2.1.0" }
+plugin-publish = { id = "com.gradle.plugin-publish", version = "2.1.1" }
