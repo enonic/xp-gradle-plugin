@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.gradle.api.Project;
 import org.gradle.api.model.ObjectFactory;
@@ -96,6 +97,7 @@ public class AppExtension
         this.rawDevSourcePaths.convention( List.of() );
 
         this.capabilities = objects.setProperty( String.class );
+        this.capabilities.convention( Set.of() );
     }
 
     public Property<String> getName()
