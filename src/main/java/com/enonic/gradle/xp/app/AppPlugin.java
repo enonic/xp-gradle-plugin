@@ -1,6 +1,5 @@
 package com.enonic.gradle.xp.app;
 
-import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -37,6 +36,7 @@ public final class AppPlugin
 
         this.ext = XpExtension.get( this.project );
         this.appExt = AppExtension.create( this.project );
+        this.appExt.getSystemVersion().convention( this.ext.getVersionProperty() );
 
         this.project.afterEvaluate( this::afterEvaluate );
 
@@ -51,11 +51,11 @@ public final class AppPlugin
         final XpVersion xpVersion = getXpVersion();
         final boolean hasSourcePaths = new BundleConfigurator( project ).configure( this.appExt, xpVersion );
 
-        if ( !appExt.isKeepArchiveFileName() )
+        if ( !appExt.getKeepArchiveFileName().get() )
         {
             skipJarVersion();
         }
-        if ( !appExt.isAllowDevSourcePathsPublishing() && hasSourcePaths )
+        if ( !appExt.getAllowDevSourcePathsPublishing().get() && hasSourcePaths )
         {
             preventSourcePathsPublishing();
         }
@@ -65,11 +65,11 @@ public final class AppPlugin
 
     private XpVersion getXpVersion()
     {
-        final String version = Objects.requireNonNullElse( appExt.getSystemVersion(), "" ).trim();
+        final String version = appExt.getSystemVersion().map( String::trim ).orElse( "" ).get();
         if ( version.isEmpty() )
         {
             throw new IllegalArgumentException(
-                "XP system version not specified. Please add the following line in the 'app' closure in build.gradle:\r\n  systemVersion = \"${xpVersion}\"" );
+                "XP system version not specified. Please set xpVersion in gradle.properties or configure app { systemVersion = \"...\" }" );
         }
         final XpVersion xpVersion = XpVersion.parse( version );
         if ( !xpVersion.valid )
@@ -91,10 +91,10 @@ public final class AppPlugin
     private void applyDevTask()
     {
         project.afterEvaluate( p -> {
-            if ( appExt.isCreateDefaultDevTask() )
+            if ( appExt.getCreateDefaultDevTask().get() )
             {
                 p.getTasks().register( "dev", DevTask.class, task -> {
-                    final String taskName = appExt.getContinuousTaskName();
+                    final String taskName = appExt.getContinuousTaskName().get();
                     final String projectPath = p.getPath();
                     final String qualifiedTaskName = ":".equals( projectPath ) ? taskName : projectPath + ":" + taskName;
                     task.getContinuousTaskName().set( qualifiedTaskName );

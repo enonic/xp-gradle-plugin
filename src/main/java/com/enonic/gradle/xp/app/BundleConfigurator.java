@@ -49,7 +49,7 @@ final class BundleConfigurator
 
     boolean configure( final AppExtension application, final XpVersion xpVersion )
     {
-        validateApplicationName( application.getName() );
+        validateApplicationName( application.getName().get() );
 
         final Configuration libConfig = this.project.getConfigurations().getByName( "include" );
         final Configuration filteredConfig = DependenciesConfigurator.configure( libConfig, xpVersion );
@@ -65,15 +65,15 @@ final class BundleConfigurator
         instruction( "-nouses", "true" );
         instruction( "-dsannotations", "*" );
 
-        instruction( "Bundle-SymbolicName", application.getName() );
-        instruction( "Bundle-Name", application.getDisplayName() );
-        instruction( "X-Application-Url", application.getUrl() );
-        instruction( "X-Vendor-Name", application.getVendorName() );
-        instruction( "X-Vendor-Url", application.getVendorUrl() );
+        instruction( "Bundle-SymbolicName", application.getName().get() );
+        instruction( "Bundle-Name", application.getDisplayName().get() );
+        instruction( "X-Application-Url", application.getUrl().getOrNull() );
+        instruction( "X-Vendor-Name", application.getVendorName().getOrNull() );
+        instruction( "X-Vendor-Url", application.getVendorUrl().getOrNull() );
         instruction( "X-System-Version", xpVersion.range );
-        instruction( "X-Bundle-Type", application.isSystemApp() ? SYSTEM_BUNDLE_TYPE : APPLICATION_BUNDLE_TYPE );
-        instruction( "X-Capability", String.join( ",", application.getCapabilities() ) );
-        instruction( "X-Script-Engine", application.getScriptEngine() );
+        instruction( "X-Bundle-Type", application.getSystemApp().get() ? SYSTEM_BUNDLE_TYPE : APPLICATION_BUNDLE_TYPE );
+        instruction( "X-Capability", String.join( ",", application.getCapabilities().get() ) );
+        instruction( "X-Script-Engine", application.getScriptEngine().getOrNull() );
 
         for ( final Map.Entry<String, String> entry : instructions.entrySet() )
         {
@@ -83,7 +83,7 @@ final class BundleConfigurator
         includeServiceLoader( filteredConfig );
         includeWebJars();
 
-        return addDevSourcePaths( application.getDevSourcePaths(), application.getRawDevSourcePaths() );
+        return addDevSourcePaths( application.getDevSourcePaths().get(), application.getRawDevSourcePaths().get() );
     }
 
     private void instruction( final String name, final Object value )
