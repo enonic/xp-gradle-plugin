@@ -7,7 +7,7 @@ import org.gradle.api.provider.Provider;
 public final class SettingsPlugin
     implements Plugin<Settings>
 {
-    static final String CATALOG_NAME = "xplib";
+    static final String CATALOG_NAME = "xplibs";
 
     private static final String XP_GROUP = "com.enonic.xp";
 

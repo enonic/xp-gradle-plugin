@@ -25,20 +25,20 @@ Define `xpVersion` in `gradle.properties`
 xpVersion = 8.0.0
 ```
 
-Creates a `xplib` version catalog with XP dependencies.
+Creates a `xplibs` version catalog with XP dependencies.
 
 Example usage in `build.gradle.kts`:
 
 ```kotlin
 dependencies {
     // Java API dependencies
-    implementation(xplib.api.core)
-    implementation(xplib.api.portal)
+    implementation(xplibs.api.core)
+    implementation(xplibs.api.portal)
 
     // JavaScript Library dependencies
-    include(xplib.content)
-    include(xplib.portal)
-    include(xplib.context)
+    include(xplibs.content)
+    include(xplibs.portal)
+    include(xplibs.context)
 }
 ```
 
