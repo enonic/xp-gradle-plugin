@@ -1,12 +1,12 @@
 package com.enonic.gradle.xp.app;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.gradle.api.Project;
+import org.gradle.api.file.Directory;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
@@ -17,14 +17,6 @@ public class AppExtension
     private final Project project;
 
     private final Property<String> name;
-
-    private final Property<String> displayName;
-
-    private final Property<String> url;
-
-    private final Property<String> vendorName;
-
-    private final Property<String> vendorUrl;
 
     private final Property<String> systemVersion;
 
@@ -42,7 +34,7 @@ public class AppExtension
 
     private final Map<String, String> instructions;
 
-    private final ListProperty<File> devSourcePaths;
+    private final ListProperty<Directory> devSourcePaths;
 
     private final ListProperty<String> rawDevSourcePaths;
 
@@ -55,17 +47,6 @@ public class AppExtension
 
         this.name = objects.property( String.class );
         this.name.convention( project.getProviders().gradleProperty( "appName" ).orElse( project.provider( this::composeDefaultName ) ) );
-
-        this.displayName = objects.property( String.class );
-        this.displayName.convention( project.getProviders().gradleProperty( "appDisplayName" ).orElse( this.name ) );
-
-        this.url = objects.property( String.class );
-
-        this.vendorName = objects.property( String.class );
-        this.vendorName.convention( project.getProviders().gradleProperty( "vendorName" ) );
-
-        this.vendorUrl = objects.property( String.class );
-        this.vendorUrl.convention( project.getProviders().gradleProperty( "vendorUrl" ) );
 
         this.systemVersion = objects.property( String.class );
 
@@ -88,10 +69,10 @@ public class AppExtension
 
         this.instructions = new HashMap<>();
 
-        this.devSourcePaths = objects.listProperty( File.class );
+        this.devSourcePaths = objects.listProperty( Directory.class );
         this.devSourcePaths.convention( project.provider(
-            () -> List.of( project.getLayout().getProjectDirectory().dir( "src/main/resources" ).getAsFile(),
-                           project.getLayout().getBuildDirectory().get().dir( "resources/main" ).getAsFile() ) ) );
+            () -> List.of( project.getLayout().getProjectDirectory().dir( "src/main/resources" ),
+                           project.getLayout().getBuildDirectory().get().dir( "resources/main" ) ) ) );
 
         this.rawDevSourcePaths = objects.listProperty( String.class );
         this.rawDevSourcePaths.convention( List.of() );
@@ -108,46 +89,6 @@ public class AppExtension
     public void setName( final String name )
     {
         this.name.set( name );
-    }
-
-    public Property<String> getDisplayName()
-    {
-        return this.displayName;
-    }
-
-    public void setDisplayName( final String displayName )
-    {
-        this.displayName.set( displayName );
-    }
-
-    public Property<String> getUrl()
-    {
-        return this.url;
-    }
-
-    public void setUrl( final String url )
-    {
-        this.url.set( url );
-    }
-
-    public Property<String> getVendorName()
-    {
-        return this.vendorName;
-    }
-
-    public void setVendorName( final String vendorName )
-    {
-        this.vendorName.set( vendorName );
-    }
-
-    public Property<String> getVendorUrl()
-    {
-        return this.vendorUrl;
-    }
-
-    public void setVendorUrl( final String vendorUrl )
-    {
-        this.vendorUrl.set( vendorUrl );
     }
 
     public Property<String> getSystemVersion()
@@ -220,7 +161,7 @@ public class AppExtension
         this.continuousTaskName.set( continuousTaskName );
     }
 
-    public ListProperty<File> getDevSourcePaths()
+    public ListProperty<Directory> getDevSourcePaths()
     {
         return this.devSourcePaths;
     }

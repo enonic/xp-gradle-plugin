@@ -20,6 +20,7 @@ import java.util.zip.ZipFile;
 
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.file.Directory;
 import org.gradle.api.file.SourceDirectorySet;
 import org.gradle.api.tasks.SourceSetContainer;
 
@@ -66,10 +67,6 @@ final class BundleConfigurator
         instruction( "-dsannotations", "*" );
 
         instruction( "Bundle-SymbolicName", application.getName().get() );
-        instruction( "Bundle-Name", application.getDisplayName().get() );
-        instruction( "X-Application-Url", application.getUrl().getOrNull() );
-        instruction( "X-Vendor-Name", application.getVendorName().getOrNull() );
-        instruction( "X-Vendor-Url", application.getVendorUrl().getOrNull() );
         instruction( "X-System-Version", xpVersion.range );
         instruction( "X-Bundle-Type", application.getSystemApp().get() ? SYSTEM_BUNDLE_TYPE : APPLICATION_BUNDLE_TYPE );
         instruction( "X-Capability", String.join( ",", application.getCapabilities().get() ) );
@@ -217,7 +214,7 @@ final class BundleConfigurator
         }
     }
 
-    private boolean addDevSourcePaths( final List<File> paths, final List<String> rawPaths )
+    private boolean addDevSourcePaths( final List<Directory> paths, final List<String> rawPaths )
     {
         if ( !"dev".equals( project.getProviders().gradleProperty( "env" ).getOrNull() ) )
         {
@@ -225,7 +222,7 @@ final class BundleConfigurator
         }
         final Set<String> sourcePaths = new LinkedHashSet<>();
         paths.stream()
-            .map( File::getAbsolutePath )
+            .map( dir -> dir.getAsFile().getAbsolutePath() )
             .map( absolutePath -> absolutePath.replace( File.separatorChar, '/' ) )
             .forEach( sourcePaths::add );
         sourcePaths.addAll( rawPaths );

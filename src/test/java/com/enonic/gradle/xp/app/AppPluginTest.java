@@ -11,13 +11,13 @@ class AppPluginTest
     void xp7IsNotSupported()
     {
         XpVersion xpVersion = XpVersion.parse( "7.13.0" );
-        assertThrows( IllegalStateException.class, () -> AppPlugin.ensureCorrectJavaCompilerVersion( null, xpVersion ) );
+        assertThrows( IllegalStateException.class, () -> AppPlugin.ensureCorrectXpVersion( xpVersion ) );
     }
 
     @Test
     void xp8IsSupported()
     {
         XpVersion xpVersion = XpVersion.parse( "8.0.0" );
-        assertDoesNotThrow( () -> AppPlugin.ensureCorrectJavaCompilerVersion( null, xpVersion ) );
+        assertDoesNotThrow( () -> AppPlugin.ensureCorrectXpVersion( xpVersion ) );
     }
 }

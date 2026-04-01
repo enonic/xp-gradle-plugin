@@ -57,6 +57,31 @@ When the Java plugin is applied, the base plugin:
 
 - Sets the Java toolchain to version 25 (as a convention default)
 
+#### `xp {}` Extension
+
+The base plugin creates the `xp {}` extension:
+
+```kotlin
+xp {
+    version = "8.0.0"
+    homeDir = file("/path/to/xp/home")
+}
+```
+
+| Property | Default | Description |
+|---|---|---|
+| `version` | `xpVersion` from `gradle.properties` | XP version |
+| `homeDir` | `xpHome` gradle property, `xp.home` system property, `XP_HOME` env variable, or `${buildDir}/xp/home` | XP home directory |
+
+The extension also provides a helper to add Enonic Maven repositories:
+
+```kotlin
+repositories {
+    xp.enonicRepo()           // https://repo.enonic.com/public
+    xp.enonicRepo("snapshot") // https://repo.enonic.com/snapshot
+}
+```
+
 ### App Plugin (`com.enonic.xp.app`)
 
 Plugin for Enonic XP application development. Automatically applies the base plugin.
@@ -67,38 +92,19 @@ plugins {
 }
 ```
 
-#### App Defaults from `gradle.properties`
+#### `app {}` Extension
 
-The `app {}` extension reads defaults from Gradle project properties. These can be set in `gradle.properties`:
-
-```properties
-xpVersion = 8.0.0
-appName = com.example.myapp
-appDisplayName = My Application
-vendorName = Example Inc
-vendorUrl = https://example.com
-```
-
-| Property | `gradle.properties` key | Fallback |
+| Property | Default | Description |
 |---|---|---|
-| `systemVersion` | `xpVersion` | _(required)_ |
-| `name` | `appName` | `${group}.${project.name}` |
-| `displayName` | `appDisplayName` | value of `name` |
-| `vendorName` | `vendorName` | _(none)_ |
-| `vendorUrl` | `vendorUrl` | _(none)_ |
-
-Any property explicitly set in the `app {}` block takes precedence:
+| `systemVersion` | `xp.version` | XP system version. Supports version ranges in interval notation (e.g. `[8.0,9)`) |
+| `name` | `appName` gradle property, or `${group}.${project.name}` | Application name |
 
 ```kotlin
 app {
-    name = "com.example.override"
-    displayName = "Override Display Name"
+    name = "com.example.myapp"
+    systemVersion = "[8.0,9)"
 }
 ```
-
-#### Java Toolchain
-
-The base plugin sets the Java toolchain language version to 25 as a convention default.
 
 ## Development Setup
 
@@ -114,14 +120,6 @@ pluginManagement {
 
 plugins {
     id("com.enonic.xp.settings") version "4.0.0-SNAPSHOT"
-}
-```
-
-Then in `build.gradle.kts`:
-
-```kotlin
-plugins {
-    id("com.enonic.xp.app") version "4.0.0-SNAPSHOT"
 }
 ```
 

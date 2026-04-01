@@ -8,11 +8,10 @@ import java.nio.file.Files;
 import javax.inject.Inject;
 
 import org.gradle.api.DefaultTask;
+import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.FileSystemOperations;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.model.ObjectFactory;
-import org.gradle.api.provider.Property;
-import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.TaskAction;
 
@@ -21,7 +20,7 @@ public class DeployTask
 {
     private final FileSystemOperations fileSystemOperations;
 
-    private final Property<File> homeDir;
+    private final DirectoryProperty homeDir;
 
     private final RegularFileProperty from;
 
@@ -29,7 +28,7 @@ public class DeployTask
     public DeployTask( final FileSystemOperations fileSystemOperations, final ObjectFactory objects )
     {
         this.fileSystemOperations = fileSystemOperations;
-        this.homeDir = objects.property( File.class );
+        this.homeDir = objects.directoryProperty();
         this.from = objects.fileProperty();
         setGroup( "Application" );
         setDescription( "Deploy application to XP_HOME directory." );
@@ -43,16 +42,17 @@ public class DeployTask
         return from;
     }
 
-    public void setHomeDir( final Provider<File> dir )
+    @Internal
+    public DirectoryProperty getHomeDir()
     {
-        this.homeDir.set( dir );
+        return this.homeDir;
     }
 
     @TaskAction
     public void run()
     {
         final File source = getFrom().get().getAsFile();
-        final File deployDir = new File( homeDir.get(), "deploy" );
+        final File deployDir = homeDir.dir( "deploy" ).get().getAsFile();
         final File destination = new File( deployDir, source.getName() );
 
         if ( isIdentical( source, destination ) )
