@@ -1,6 +1,5 @@
 package com.enonic.gradle.xp.app;
 
-import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -37,39 +36,44 @@ public final class AppPlugin
 
         this.ext = XpExtension.get( this.project );
         this.appExt = AppExtension.create( this.project );
+        this.appExt.getSystemVersion().convention( this.ext.getVersion() );
 
         this.project.afterEvaluate( this::afterEvaluate );
 
         addLibraryConfig();
         addWebJarConfig();
         applyDeployTask();
-        applyDevTask();
     }
 
     private void afterEvaluate( final Project project )
     {
         final XpVersion xpVersion = getXpVersion();
+        ensureCorrectXpVersion( xpVersion );
+
         final boolean hasSourcePaths = new BundleConfigurator( project ).configure( this.appExt, xpVersion );
 
-        if ( !appExt.isKeepArchiveFileName() )
+        if ( !appExt.getKeepArchiveFileName().get() )
         {
             skipJarVersion();
         }
-        if ( !appExt.isAllowDevSourcePathsPublishing() && hasSourcePaths )
+        if ( !appExt.getAllowDevSourcePathsPublishing().get() && hasSourcePaths )
         {
             preventSourcePathsPublishing();
         }
 
-        ensureCorrectJavaCompilerVersion( project, xpVersion );
+        if ( appExt.getCreateDefaultDevTask().get() )
+        {
+            applyDevTask();
+        }
     }
 
     private XpVersion getXpVersion()
     {
-        final String version = Objects.requireNonNullElse( appExt.getSystemVersion(), "" ).trim();
+        final String version = appExt.getSystemVersion().map( String::trim ).orElse( "" ).get();
         if ( version.isEmpty() )
         {
             throw new IllegalArgumentException(
-                "XP system version not specified. Please add the following line in the 'app' closure in build.gradle:\r\n  systemVersion = \"${xpVersion}\"" );
+                "XP system version not specified. Please set xpVersion in gradle.properties or configure app { systemVersion = \"...\" }" );
         }
         final XpVersion xpVersion = XpVersion.parse( version );
         if ( !xpVersion.valid )
@@ -81,26 +85,17 @@ public final class AppPlugin
 
     private void applyDeployTask()
     {
-        project.getTasks().register( "deploy", DeployTask.class );
-        project.getTasks().withType( DeployTask.class, task -> {
-            task.setHomeDir( ext.getHomeDirProperty() );
+        project.getTasks().register( "deploy", DeployTask.class, task -> {
+            task.getHomeDir().set( ext.getHomeDir() );
             task.getFrom().set( project.getTasks().named( "jar", Jar.class ).flatMap( Jar::getArchiveFile ) );
         } );
     }
 
     private void applyDevTask()
     {
-        project.afterEvaluate( p -> {
-            if ( appExt.isCreateDefaultDevTask() )
-            {
-                p.getTasks().register( "dev", DevTask.class, task -> {
-                    final String taskName = appExt.getContinuousTaskName();
-                    final String projectPath = p.getPath();
-                    final String qualifiedTaskName = ":".equals( projectPath ) ? taskName : projectPath + ":" + taskName;
-                    task.getContinuousTaskName().set( qualifiedTaskName );
-                } );
-            }
-        } );
+        project.getTasks()
+            .register( "dev", DevTask.class,
+                       task -> task.getContinuousTaskName().set( appExt.getContinuousTaskName().map( project::absoluteProjectPath ) ) );
     }
 
     private void addLibraryConfig()
@@ -114,7 +109,7 @@ public final class AppPlugin
         project.getConfigurations().create( "webjar", conf -> conf.setTransitive( true ) );
     }
 
-    private void skipJarVersion()
+    void skipJarVersion()
     {
         final Jar jar = (Jar) project.getTasks().getByName( "jar" );
         final String base = jar.getArchiveBaseName().getOrElse( "" );
@@ -129,12 +124,12 @@ public final class AppPlugin
     private void preventSourcePathsPublishing()
     {
         project.getTasks().withType( PublishToMavenRepository.class ).all( task -> task.doFirst( t -> {
-            throw new IllegalStateException( "Application has non-empty X-Source-Paths. " +
-                                                 "Build application without -Pdev property for publishing." );
+            throw new IllegalStateException(
+                "Application has non-empty X-Source-Paths. Build application without -Pdev property for publishing." );
         } ) );
     }
 
-    static void ensureCorrectJavaCompilerVersion( Project project, final XpVersion xpVersion )
+    static void ensureCorrectXpVersion( final XpVersion xpVersion )
     {
         if ( xpVersion.major < 8 )
         {

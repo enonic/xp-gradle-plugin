@@ -16,7 +16,9 @@ import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.internal.os.OperatingSystem;
 import org.gradle.process.ExecOperations;
+import org.gradle.work.DisableCachingByDefault;
 
+@DisableCachingByDefault(because = "Runs a continuous development process")
 public class DevTask
     extends DefaultTask
 {

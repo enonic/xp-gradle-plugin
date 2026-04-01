@@ -4,9 +4,9 @@ import java.io.File;
 
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
+import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
-import org.gradle.api.provider.Provider;
 
 public class XpExtension
 {
@@ -14,25 +14,25 @@ public class XpExtension
 
     private final Property<String> version;
 
-    private final Property<File> homeDir;
-
-    private final Property<File> installDir;
+    private final DirectoryProperty homeDir;
 
     public XpExtension( final Project project )
     {
         this.project = project;
-        ObjectFactory objectFactory = project.getObjects();
-        this.version = objectFactory.property( String.class );
-        this.homeDir = objectFactory.property( File.class );
-        this.installDir = objectFactory.property( File.class );
+        final ObjectFactory objects = project.getObjects();
+        this.version = objects.property( String.class );
+        this.version.convention( project.getProviders().gradleProperty( "xpVersion" ) );
+
+        this.homeDir = objects.directoryProperty();
+        this.homeDir.convention( project.getProviders()
+                                     .gradleProperty( "xpHome" )
+                                     .orElse( project.getProviders().systemProperty( "xp.home" ) )
+                                     .orElse( project.getProviders().environmentVariable( "XP_HOME" ) )
+                                     .map( path -> objects.directoryProperty().fileValue( new File( path ) ).get() )
+                                     .orElse( project.getLayout().getBuildDirectory().dir( "xp/home" ) ) );
     }
 
-    public String getVersion()
-    {
-        return this.version.get();
-    }
-
-    public Property<String> getVersionProperty()
+    public Property<String> getVersion()
     {
         return this.version;
     }
@@ -42,12 +42,7 @@ public class XpExtension
         this.version.set( version );
     }
 
-    public File getHomeDir()
-    {
-        return this.homeDir.get();
-    }
-
-    public Property<File> getHomeDirProperty()
+    public DirectoryProperty getHomeDir()
     {
         return this.homeDir;
     }
@@ -55,21 +50,6 @@ public class XpExtension
     public void setHomeDir( final File dir )
     {
         this.homeDir.set( dir );
-    }
-
-    public File getInstallDir()
-    {
-        return this.installDir.get();
-    }
-
-    public Property<File> getInstallDirProperty()
-    {
-        return this.installDir;
-    }
-
-    public void setInstallDir( final File dir )
-    {
-        this.installDir.set( dir );
     }
 
     public static XpExtension get( final Project project )

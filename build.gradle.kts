@@ -40,6 +40,13 @@ gradlePlugin {
             tags.set(listOf("enonic", "java", "javascript", "xp"))
             implementationClass = "com.enonic.gradle.xp.BasePlugin"
         }
+        create("settings_plugin") {
+            id = "com.enonic.xp.settings"
+            displayName = "Enonic XP Settings Plugin"
+            description = "Registers main XP dependencies catalog"
+            tags.set(listOf("enonic", "java", "javascript", "xp"))
+            implementationClass = "com.enonic.gradle.xp.SettingsPlugin"
+        }
         create("app_plugin") {
             id = "com.enonic.xp.app"
             displayName = "Enonic XP App Plugin"

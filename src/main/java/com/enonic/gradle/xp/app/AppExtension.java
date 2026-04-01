@@ -1,172 +1,174 @@
 package com.enonic.gradle.xp.app;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import org.gradle.api.Project;
+import org.gradle.api.file.Directory;
+import org.gradle.api.model.ObjectFactory;
+import org.gradle.api.provider.ListProperty;
+import org.gradle.api.provider.Property;
+import org.gradle.api.provider.SetProperty;
 
 public class AppExtension
 {
     private final Project project;
 
-    private String name;
+    private final Property<String> name;
 
-    private String displayName;
+    private final Property<String> systemVersion;
 
-    private String url;
+    private final Property<String> scriptEngine;
 
-    private String vendorName;
+    private final Property<Boolean> systemApp;
 
-    private String vendorUrl;
+    private final Property<Boolean> keepArchiveFileName;
 
-    private String systemVersion;
+    private final Property<Boolean> allowDevSourcePathsPublishing;
 
-    private String scriptEngine;
+    private final Property<Boolean> createDefaultDevTask;
+
+    private final Property<String> continuousTaskName;
 
     private final Map<String, String> instructions;
 
-    private List<File> devSourcePaths;
-    
-    private boolean devSourcePathsInitialized = false;
+    private final ListProperty<Directory> devSourcePaths;
 
-    private List<String> rawDevSourcePaths;
+    private final ListProperty<String> rawDevSourcePaths;
 
-    private boolean systemApp;
-
-    private boolean keepArchiveFileName;
-
-    private boolean allowDevSourcePathsPublishing;
-
-    private boolean createDefaultDevTask = true;
-
-    private String continuousTaskName = "deploy";
-
-    private final Set<String> capabilities;
+    private final SetProperty<String> capabilities;
 
     public AppExtension( final Project project )
     {
         this.project = project;
+        final ObjectFactory objects = project.getObjects();
+
+        this.name = objects.property( String.class );
+        this.name.convention( project.getProviders().gradleProperty( "appName" ).orElse( project.provider( this::composeDefaultName ) ) );
+
+        this.systemVersion = objects.property( String.class );
+
+        this.scriptEngine = objects.property( String.class );
+
+        this.systemApp = objects.property( Boolean.class );
+        this.systemApp.convention( false );
+
+        this.keepArchiveFileName = objects.property( Boolean.class );
+        this.keepArchiveFileName.convention( false );
+
+        this.allowDevSourcePathsPublishing = objects.property( Boolean.class );
+        this.allowDevSourcePathsPublishing.convention( false );
+
+        this.createDefaultDevTask = objects.property( Boolean.class );
+        this.createDefaultDevTask.convention( true );
+
+        this.continuousTaskName = objects.property( String.class );
+        this.continuousTaskName.convention( "deploy" );
+
         this.instructions = new HashMap<>();
 
-        this.devSourcePaths = new ArrayList<>();
-        // Don't initialize default paths here - defer until first access to avoid eager build directory resolution
-        
-        this.rawDevSourcePaths = new ArrayList<>();
+        this.devSourcePaths = objects.listProperty( Directory.class );
+        this.devSourcePaths.convention( project.provider(
+            () -> List.of( project.getLayout().getProjectDirectory().dir( "src/main/resources" ),
+                           project.getLayout().getBuildDirectory().get().dir( "resources/main" ) ) ) );
 
-        this.capabilities = new HashSet<>();
+        this.rawDevSourcePaths = objects.listProperty( String.class );
+        this.rawDevSourcePaths.convention( List.of() );
+
+        this.capabilities = objects.setProperty( String.class );
+        this.capabilities.convention( Set.of() );
     }
 
-    public String getName()
+    public Property<String> getName()
     {
-        return Objects.requireNonNullElseGet( this.name, this::composeDefaultName );
+        return this.name;
     }
 
     public void setName( final String name )
     {
-        this.name = name;
+        this.name.set( name );
     }
 
-    public String getDisplayName()
-    {
-        return this.displayName != null ? this.displayName : getName();
-    }
-
-    public void setDisplayName( final String displayName )
-    {
-        this.displayName = displayName;
-    }
-
-    public String getUrl()
-    {
-        return this.url;
-    }
-
-    public void setUrl( final String url )
-    {
-        this.url = url;
-    }
-
-    public String getVendorName()
-    {
-        return this.vendorName;
-    }
-
-    public void setVendorName( final String vendorName )
-    {
-        this.vendorName = vendorName;
-    }
-
-    public String getVendorUrl()
-    {
-        return this.vendorUrl;
-    }
-
-    public void setVendorUrl( final String vendorUrl )
-    {
-        this.vendorUrl = vendorUrl;
-    }
-
-    public String getSystemVersion()
+    public Property<String> getSystemVersion()
     {
         return this.systemVersion;
     }
 
     public void setSystemVersion( final String systemVersion )
     {
-        this.systemVersion = systemVersion;
+        this.systemVersion.set( systemVersion );
     }
 
-    public String getScriptEngine()
+    public Property<String> getScriptEngine()
     {
-        return scriptEngine;
+        return this.scriptEngine;
     }
 
     public void setScriptEngine( final String scriptEngine )
     {
-        this.scriptEngine = scriptEngine;
+        this.scriptEngine.set( scriptEngine );
     }
 
-    public List<File> getDevSourcePaths()
+    public Property<Boolean> getSystemApp()
     {
-        initializeDevSourcePathsIfNeeded();
+        return this.systemApp;
+    }
+
+    public void setSystemApp( final boolean systemApp )
+    {
+        this.systemApp.set( systemApp );
+    }
+
+    public Property<Boolean> getKeepArchiveFileName()
+    {
+        return this.keepArchiveFileName;
+    }
+
+    public void setKeepArchiveFileName( final boolean keepArchiveFileName )
+    {
+        this.keepArchiveFileName.set( keepArchiveFileName );
+    }
+
+    public Property<Boolean> getAllowDevSourcePathsPublishing()
+    {
+        return this.allowDevSourcePathsPublishing;
+    }
+
+    public void setAllowDevSourcePathsPublishing( final boolean allowDevSourcePathsPublishing )
+    {
+        this.allowDevSourcePathsPublishing.set( allowDevSourcePathsPublishing );
+    }
+
+    public Property<Boolean> getCreateDefaultDevTask()
+    {
+        return this.createDefaultDevTask;
+    }
+
+    public void setCreateDefaultDevTask( final boolean createDefaultDevTask )
+    {
+        this.createDefaultDevTask.set( createDefaultDevTask );
+    }
+
+    public Property<String> getContinuousTaskName()
+    {
+        return this.continuousTaskName;
+    }
+
+    public void setContinuousTaskName( final String continuousTaskName )
+    {
+        this.continuousTaskName.set( continuousTaskName );
+    }
+
+    public ListProperty<Directory> getDevSourcePaths()
+    {
         return this.devSourcePaths;
     }
-    
-    private void initializeDevSourcePathsIfNeeded()
-    {
-        if ( !this.devSourcePathsInitialized )
-        {
-            // Only add default paths if the list is still empty (user hasn't set custom paths)
-            if ( this.devSourcePaths.isEmpty() )
-            {
-                this.devSourcePaths.add( this.project.getLayout().getProjectDirectory().dir( "src/main/resources" ).getAsFile() );
-                this.devSourcePaths.add( this.project.getLayout().getBuildDirectory().get().dir( "resources/main" ).getAsFile() );
-            }
-            this.devSourcePathsInitialized = true;
-        }
-    }
 
-    public void setDevSourcePaths( final List<File> devSourcePaths )
-    {
-        this.devSourcePaths = devSourcePaths;
-        this.devSourcePathsInitialized = true;  // Mark as initialized since user provided custom paths
-    }
-
-    public List<String> getRawDevSourcePaths()
+    public ListProperty<String> getRawDevSourcePaths()
     {
         return this.rawDevSourcePaths;
-    }
-
-    public void setRawDevSourcePaths( final List<String> rawDevSourcePaths )
-    {
-        this.rawDevSourcePaths = rawDevSourcePaths;
     }
 
     public Map<String, String> getInstructions()
@@ -179,14 +181,9 @@ public class AppExtension
         this.instructions.merge( name, value, ( a, b ) -> a + "," + b );
     }
 
-    public Set<String> getCapabilities()
+    public SetProperty<String> getCapabilities()
     {
         return this.capabilities;
-    }
-
-    public void setCapabilities( final String... values )
-    {
-        this.capabilities.addAll( Arrays.asList( values ) );
     }
 
     private String composeDefaultName()
@@ -197,56 +194,6 @@ public class AppExtension
         }
 
         return this.project.getGroup() + "." + this.project.getName();
-    }
-
-    public boolean isSystemApp()
-    {
-        return this.systemApp;
-    }
-
-    public void setSystemApp( final boolean systemApp )
-    {
-        this.systemApp = systemApp;
-    }
-
-    public boolean isKeepArchiveFileName()
-    {
-        return keepArchiveFileName;
-    }
-
-    public void setKeepArchiveFileName( final boolean keepArchiveFileName )
-    {
-        this.keepArchiveFileName = keepArchiveFileName;
-    }
-
-    public boolean isAllowDevSourcePathsPublishing()
-    {
-        return allowDevSourcePathsPublishing;
-    }
-
-    public void setAllowDevSourcePathsPublishing( final boolean allowDevSourcePathsPublishing )
-    {
-        this.allowDevSourcePathsPublishing = allowDevSourcePathsPublishing;
-    }
-
-    public boolean isCreateDefaultDevTask()
-    {
-        return createDefaultDevTask;
-    }
-
-    public void setCreateDefaultDevTask( final boolean createDefaultDevTask )
-    {
-        this.createDefaultDevTask = createDefaultDevTask;
-    }
-
-    public String getContinuousTaskName()
-    {
-        return continuousTaskName;
-    }
-
-    public void setContinuousTaskName( final String continuousTaskName )
-    {
-        this.continuousTaskName = continuousTaskName;
     }
 
     public static AppExtension get( final Project project )
