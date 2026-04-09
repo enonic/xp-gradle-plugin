@@ -98,11 +98,14 @@ plugins {
 |---|---|---|
 | `systemVersion` | `xp.version` | XP system version. Supports version ranges in interval notation (e.g. `[8.0,9)`) |
 | `name` | `appName` gradle property, or `${group}.${project.name}` | Application name |
+| `createDefaultDevTask` | `true` | When enabled, registers a `dev` task that runs the `deploy` task in continuous mode (`--continuous`) for development. Set to `false` to disable the default `dev` task, e.g. when defining a custom one. |
+| `continuousTaskName` | `deploy` | The task name that the `dev` task runs in continuous mode. |
 
 ```kotlin
 app {
     name = "com.example.myapp"
     systemVersion = "[8.0,9)"
+    createDefaultDevTask = false // disable the default dev task
 }
 ```
 
