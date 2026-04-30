@@ -17,7 +17,7 @@ public final class SettingsPlugin
     private static final String[] XP_LIBS =
         {"lib-admin", "lib-app", "lib-auditlog", "lib-auth", "lib-cluster", "lib-common", "lib-content", "lib-context", "lib-event",
             "lib-export", "lib-grid", "lib-i18n", "lib-io", "lib-mail", "lib-node", "lib-portal", "lib-project", "lib-repo",
-            "lib-scheduler", "lib-schema", "lib-task", "lib-value", "lib-vhost", "lib-websocket"};
+            "lib-scheduler", "lib-schema", "lib-sse", "lib-task", "lib-value", "lib-vhost", "lib-websocket"};
 
     @Override
     public void apply( final Settings settings )
