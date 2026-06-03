@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.plugin.publish)
 }
 
-version = "4.0.0-B1"
+version = "4.0.0"
 group = "com.enonic.gradle"
 
 repositories {
