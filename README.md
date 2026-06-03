@@ -46,7 +46,12 @@ To build and publish the plugin to your local maven repository:
 
 ## Releasing
 
-To release a new version of the plugin, change the version in `build.gradle.kts` (for instance `version = "4.0.0"`),
+Releases are cut from a version branch, not from `master` (which tracks the next, unreleased version). Check out the branch that matches the version you are releasing:
+
+- `4.x` — for Enonic XP 8.x releases (`4.0.0`, `4.0.1`, …)
+- `3.x` — for Enonic XP 7.x releases (`3.6.x`)
+
+On that branch, change the version in `build.gradle.kts` (for instance `version = "4.0.0"`),
 tag the commit with the version number (for instance `git tag v4.0.0`) and push to GitHub (`git push --follow-tags`).
 
 After the release is done, update the version in `build.gradle.kts` to the next snapshot version (for instance `version = "4.0.1-SNAPSHOT"`).
