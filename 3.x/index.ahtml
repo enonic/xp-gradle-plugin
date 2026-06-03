@@ -441,167 +441,43 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#enonic_xp_settings_plugin">Enonic XP Settings Plugin</a>
+<li><a href="#enonic_xp_base_plugin">Enonic XP Base Plugin</a>
 <ul class="sectlevel2">
 <li><a href="#installation">Installation</a></li>
 <li><a href="#usage">Usage</a></li>
 </ul>
 </li>
-<li><a href="#enonic_xp_base_plugin">Enonic XP Base Plugin</a>
-<ul class="sectlevel2">
-<li><a href="#installation_2">Installation</a></li>
-<li><a href="#configuration">Configuration</a></li>
-<li><a href="#usage_2">Usage</a></li>
-</ul>
-</li>
 <li><a href="#enonic_xp_app_plugin">Enonic XP App Plugin</a>
 <ul class="sectlevel2">
-<li><a href="#installation_3">Installation</a></li>
-<li><a href="#usage_3">Usage</a></li>
+<li><a href="#installation_2">Installation</a></li>
+<li><a href="#usage_2">Usage</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 <div id="content">
-<div id="preamble">
-<div class="sectionbody">
-<div class="paragraph">
-<p>These plugins simplify development of libraries and applications for Enonic XP.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-For Enonic XP 7.x, use version 3.6.2. For Enonic XP 8.x, use version 4.0.0 or later.
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="enonic_xp_settings_plugin"><a class="link" href="#enonic_xp_settings_plugin">Enonic XP Settings Plugin</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>This plugin creates a version catalog with Enonic XP dependencies.</p>
-</div>
-<div class="sect2">
-<h3 id="installation"><a class="link" href="#installation">Installation</a></h3>
-<div class="paragraph">
-<p>Apply the plugin in your <code>settings.gradle</code> file:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">plugins {
-  id 'com.enonic.xp.settings' version '4.0.0'
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="usage"><a class="link" href="#usage">Usage</a></h3>
-<div class="paragraph">
-<p>Define <code>xpVersion</code> in <code>gradle.properties</code>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-properties" data-lang="properties">xpVersion = 8.0.0</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The plugin creates a <code>xplibs</code> version catalog with Enonic XP dependencies.</p>
-</div>
-<div class="paragraph">
-<p>Example usage in <code>build.gradle</code>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-    // Java API dependencies
-    implementation xplibs.api.core
-    implementation xplibs.api.portal
-
-    // JavaScript Library dependencies
-    include xplibs.content
-    include xplibs.portal
-    include xplibs.context
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
 <div class="sect1">
 <h2 id="enonic_xp_base_plugin"><a class="link" href="#enonic_xp_base_plugin">Enonic XP Base Plugin</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>This plugin simplifies development of libraries and applications for Enonic XP.</p>
 </div>
-<div class="paragraph">
-<p>This plugin is automatically applied by the Enonic XP App Plugin.</p>
-</div>
 <div class="sect2">
-<h3 id="installation_2"><a class="link" href="#installation_2">Installation</a></h3>
+<h3 id="installation"><a class="link" href="#installation">Installation</a></h3>
 <div class="paragraph">
-<p>To install this plugin, just add the following to your <code>build.gradle</code> file:</p>
+<p>To install this plugin for Enonic XP 7.x, just add the following to your <code>build.gradle</code> file:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">plugins {
-  id 'com.enonic.xp.base'
+  id 'com.enonic.xp.base' version '3.6.0'
 }</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>When the Java plugin is applied, the base plugin sets the Java toolchain to version 25 (as a convention default).</p>
-</div>
 </div>
 <div class="sect2">
-<h3 id="configuration"><a class="link" href="#configuration">Configuration</a></h3>
-<div class="paragraph">
-<p>The base plugin creates the <code>xp {}</code> extension:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-groovy" data-lang="groovy">xp {
-    version = "8.0.0" // in case you need to override `xpVersion` from `gradle.properties`
-    homeDir = file("/path/to/xp/home")  // in case you need to override XP home directory
-}</code></pre>
-</div>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 16.6666%;">
-<col style="width: 33.3333%;">
-<col style="width: 50.0001%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Property</th>
-<th class="tableblock halign-left valign-top">Default</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>version</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>xpVersion</code> from <code>gradle.properties</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">XP version</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>homeDir</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>xpHome</code> gradle property, <code>xp.home</code> system property, <code>XP_HOME</code> env variable, or <code>${buildDir}/xp/home</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">XP home directory</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect2">
-<h3 id="usage_2"><a class="link" href="#usage_2">Usage</a></h3>
+<h3 id="usage"><a class="link" href="#usage">Usage</a></h3>
 <div class="paragraph">
 <p>Plugin defines a shorthand notation for Enonic repository that contains Enonic XP libraries and API artifacts.</p>
 </div>
@@ -611,17 +487,17 @@ For Enonic XP 7.x, use version 3.6.2. For Enonic XP 8.x, use version 4.0.0 or la
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">repositories {
-  xp.enonicRepo()           // https://repo.enonic.com/public
+  xp.enonicRepo()
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>In cases when <code>SNAPSHOT</code> versions of artifacts are needed, it is possible to specify the <code>dev</code> repository that contains both SNAPSHOT and release versions:</p>
+<p>In cases when <code>SNAPSHOT</code> versions of artifacts are needed, it is possible to specify <code>dev</code> repository that contains both SNAPSHOT and release versions:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">repositories {
-  xp.enonicRepo('dev') // https://repo.enonic.com/dev
+  xp.enonicRepo('dev')
 }</code></pre>
 </div>
 </div>
@@ -638,22 +514,22 @@ For Enonic XP 7.x, use version 3.6.2. For Enonic XP 8.x, use version 4.0.0 or la
 <p>This plugin automatically applies Enonic XP Base Plugin as well.</p>
 </div>
 <div class="sect2">
-<h3 id="installation_3"><a class="link" href="#installation_3">Installation</a></h3>
+<h3 id="installation_2"><a class="link" href="#installation_2">Installation</a></h3>
 <div class="paragraph">
-<p>To install this plugin, just add the following to your <code>build.gradle</code> file:</p>
+<p>To install this plugin for Enonic XP 7.x, just add the following to your <code>build.gradle</code> file:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">plugins {
-  id 'com.enonic.xp.app'
+  id 'com.enonic.xp.app' version '3.6.2'
 }</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="usage_3"><a class="link" href="#usage_3">Usage</a></h3>
+<h3 id="usage_2"><a class="link" href="#usage_2">Usage</a></h3>
 <div class="sect3">
-<h4 id="configuration_2"><a class="link" href="#configuration_2">Configuration</a></h4>
+<h4 id="configuration"><a class="link" href="#configuration">Configuration</a></h4>
 <div class="paragraph">
 <p>Here is the list of supported configuration properties:</p>
 </div>
@@ -661,12 +537,19 @@ For Enonic XP 7.x, use version 3.6.2. For Enonic XP 8.x, use version 4.0.0 or la
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">app {
     // Application name - unique application key.
-    // Default is the `appName` gradle property, or "${project.group}.${project.name}".
+    // Default is "${project.group}.${project.name}"
     name = "name.of.my.app"
 
-    // Minimum supported XP version for the application. Default is `xp.version`.
-    // Also supports version ranges in interval notation (e.g. "[8.0,9)").
-    systemVersion = "[8.0,9)"
+    // The display name of the application.
+    displayName = "My Application Name"
+
+    // Vendor and distribution information of the application.
+    url = "https://example.com/app"
+    vendorName = "Acme Inc"
+    vendorUrl = "https://example.com"
+
+    // Minimum supported XP version for the application.
+    systemVersion = "${xpVersion}"
 
     // By default, the plugin is using these source paths to simplify development in XP `dev` mode: ["${projectDir}/src/main/resources","${buildDir}/resources/main" ].
     // This property allows overriding these default paths, for example if you want to include sources from other modules.
@@ -677,13 +560,6 @@ For Enonic XP 7.x, use version 3.6.2. For Enonic XP 8.x, use version 4.0.0 or la
 
     // Set to `true` to restore Gradle archive naming behaviour.
     keepArchiveFileName = false
-
-    // When enabled, registers a `dev` task that runs the `deploy` task in continuous mode (`--continuous`) for development.
-    // Set to `false` to disable the default `dev` task, e.g. when defining a custom one.
-    createDefaultDevTask = true
-
-    // The task name that the `dev` task runs in continuous mode.
-    continuousTaskName = "deploy"
 }</code></pre>
 </div>
 </div>
@@ -693,7 +569,7 @@ For Enonic XP 7.x, use version 3.6.2. For Enonic XP 8.x, use version 4.0.0 or la
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">dependencies {
-    include xplibs.content
+    include "com.enonic.xp:lib-content:${xpVersion}"
     webjar "org.webjars:momentjs:2.29.1"
 }</code></pre>
 </div>
@@ -713,14 +589,14 @@ You can find more information about WebJars on <a href="https://www.webjars.org/
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Usually <code>xpVersion</code> property is defined in <code>gradle.properties</code>
+Usually <code>xpVersion</code> system property is defined in <code>gradle.properties</code>
 </td>
 </tr>
 </table>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-properties" data-lang="properties">xpVersion=8.0.0</code></pre>
+<pre class="highlight"><code class="language-properties" data-lang="properties">xpVersion=7.0.0</code></pre>
 </div>
 </div>
 </div>
@@ -797,18 +673,19 @@ You can control it with <code>app.keepArchiveFileName</code> setting.</p>
 <div class="sect3">
 <h4 id="publishing_application"><a class="link" href="#publishing_application">Publishing application</a></h4>
 <div class="paragraph">
-<p>Development source paths (<code>X-Source-Paths</code>) are added to the application manifest only when it is built with the <code>-Penv=dev</code> property (the <code>dev</code> task enables this automatically).</p>
+<p>By default, the plugin prevents applications with non-empty development source paths to be published to Maven repository.</p>
 </div>
 <div class="paragraph">
-<p>By default, the plugin prevents applications that contain development source paths from being published to a Maven repository. Build the application without the <code>-Penv=dev</code> property to publish it:</p>
+<p><code>com.enonic.xp.app.production</code> property set to <code>true</code> makes development source paths (<code>X-Source-Paths</code>) empty regardless of configuration.
+You need to set it when publishing the application to Maven repository.</p>
+</div>
+<div class="paragraph">
+<p>You can control it with <code>app.allowDevSourcePathsPublishing</code> setting.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>./gradlew clean publish</pre>
+<pre>./gradlew clean publish -Pcom.enonic.xp.app.production=true</pre>
 </div>
-</div>
-<div class="paragraph">
-<p>You can override this protection with the <code>app.allowDevSourcePathsPublishing</code> setting.</p>
 </div>
 </div>
 </div>
@@ -817,7 +694,7 @@ You can control it with <code>app.keepArchiveFileName</code> setting.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-06-03 10:18:53 UTC
+Last updated 2026-06-03 10:19:19 UTC
 </div>
 </div>
 </body>
