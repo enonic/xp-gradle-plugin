@@ -125,7 +125,7 @@ public final class AppPlugin
     {
         project.getTasks().withType( PublishToMavenRepository.class ).all( task -> task.doFirst( t -> {
             throw new IllegalStateException(
-                "Application has non-empty X-Source-Paths. Build application without -Pdev property for publishing." );
+                "Application has non-empty X-Source-Paths. Build application without -Penv=dev property for publishing." );
         } ) );
     }
 

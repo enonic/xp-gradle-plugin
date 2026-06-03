@@ -3,111 +3,21 @@
 [![Actions Status](https://github.com/enonic/xp-gradle-plugin/workflows/Gradle%20Build/badge.svg)](https://github.com/enonic/xp-gradle-plugin/actions)
 [![License](https://img.shields.io/github/license/enonic/xp-gradle-plugin.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
+Gradle plugins that simplify development of libraries and applications for Enonic XP.
+
 For Enonic XP 7.x, use version 3.6.2.
 
 For Enonic XP 8.x, use version 4.0.0 or later.
 
-## Plugins
+This repository provides three plugins:
 
-### Settings Plugin (`com.enonic.xp.settings`)
+- **`com.enonic.xp.settings`** — registers the `xplibs` version catalog with Enonic XP dependencies.
+- **`com.enonic.xp.base`** — base plugin for library and application development (Enonic repositories, the `xp {}` extension, Java toolchain).
+- **`com.enonic.xp.app`** — builds Enonic XP application jar files (automatically applies the base plugin).
 
-Apply in `settings.gradle.kts`:
+## Documentation
 
-```kotlin
-plugins {
-    id("com.enonic.xp.settings") version "4.0.0"
-}
-```
-
-Define `xpVersion` in `gradle.properties`
-
-```properties
-xpVersion = 8.0.0
-```
-
-Creates a `xplibs` version catalog with XP dependencies.
-
-Example usage in `build.gradle.kts`:
-
-```kotlin
-dependencies {
-    // Java API dependencies
-    implementation(xplibs.api.core)
-    implementation(xplibs.api.portal)
-
-    // JavaScript Library dependencies
-    include(xplibs.content)
-    include(xplibs.portal)
-    include(xplibs.context)
-}
-```
-
-
-### Base Plugin (`com.enonic.xp.base`)
-
-Base plugin for Enonic XP library and application development.
-
-```kotlin
-plugins {
-    id("com.enonic.xp.base") version "4.0.0"
-}
-```
-
-When the Java plugin is applied, the base plugin:
-
-- Sets the Java toolchain to version 25 (as a convention default)
-
-#### `xp {}` Extension
-
-The base plugin creates the `xp {}` extension:
-
-```kotlin
-xp {
-    version = "8.0.0"
-    homeDir = file("/path/to/xp/home")
-}
-```
-
-| Property | Default | Description |
-|---|---|---|
-| `version` | `xpVersion` from `gradle.properties` | XP version |
-| `homeDir` | `xpHome` gradle property, `xp.home` system property, `XP_HOME` env variable, or `${buildDir}/xp/home` | XP home directory |
-
-The extension also provides a helper to add Enonic Maven repositories:
-
-```kotlin
-repositories {
-    xp.enonicRepo()           // https://repo.enonic.com/public
-    xp.enonicRepo("snapshot") // https://repo.enonic.com/snapshot
-}
-```
-
-### App Plugin (`com.enonic.xp.app`)
-
-Plugin for Enonic XP application development. Automatically applies the base plugin.
-
-```kotlin
-plugins {
-    id("com.enonic.xp.app") version "4.0.0"
-}
-```
-
-#### `app {}` Extension
-
-| Property | Default | Description |
-|---|---|---|
-| `systemVersion` | `xp.version` | XP system version. Supports version ranges in interval notation (e.g. `[8.0,9)`) |
-| `name` | `appName` gradle property, or `${group}.${project.name}` | Application name |
-| `createDefaultDevTask` | `true` | When enabled, registers a `dev` task that runs the `deploy` task in continuous mode (`--continuous`) for development. Set to `false` to disable the default `dev` task, e.g. when defining a custom one. |
-| `continuousTaskName` | `deploy` | The task name that the `dev` task runs in continuous mode. |
-
-```kotlin
-app {
-    name = "com.example.myapp"
-    systemVersion = "[8.0,9)"
-    createDefaultDevTask = false // disable the default dev task
-}
-```
+Usage documentation for all three plugins lives in [`docs/index.adoc`](docs/index.adoc) and is published to the [Enonic Developer Portal](https://developer.enonic.com/).
 
 ## Development Setup
 
