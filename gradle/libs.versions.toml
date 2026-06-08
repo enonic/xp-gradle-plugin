@@ -3,7 +3,7 @@
 
 [libraries]
 
-bnd-gradle = { module = "biz.aQute.bnd:biz.aQute.bnd.gradle", version = "7.2.3" }
+bnd-gradle = { module = "biz.aQute.bnd:biz.aQute.bnd.gradle", version = "7.3.0" }
 
 junit-bom = { module = "org.junit:junit-bom", version = "6.1.0" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
