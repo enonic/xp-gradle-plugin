@@ -88,7 +88,7 @@ The base plugin creates the `xp {}` extension:
 [source,groovy]
 ----
 xp {
-    version = "8.0.0" // in case you need to override `xpVersion` from `gradle.properties`
+    version = "8.5.0" // optional; overrides the resolved XP version (the `xplibs` catalog, then `xpVersion` property, then `8.0.2`)
     homeDir = file("/path/to/xp/home")  // in case you need to override XP home directory
 }
 ----
@@ -98,7 +98,7 @@ xp {
 | Property | Default | Description
 
 | `version`
-| `xpVersion` from `gradle.properties`
+| the `xplibs` catalog version, then the `xpVersion` Gradle property, then `8.0.2`
 | XP version
 
 | `homeDir`
@@ -194,12 +194,7 @@ You can find more information about packaging in https://bnd.bndtools.org/heads/
 `webjar` dependencies content (`META-INF/resources/webjars` ) is placed into `/assets` folder inside the resulting jar file.
 You can find more information about WebJars on https://www.webjars.org/
 
-NOTE: Usually `xpVersion` property is defined in `gradle.properties`
-
-[source,properties]
-----
-xpVersion=8.0.0
-----
+NOTE: The XP version is optional. It resolves from the `xp { version }` block in the Settings plugin, then the `xpVersion` Gradle property, then defaults to `8.0.2`.
 
 ==== Building application
 

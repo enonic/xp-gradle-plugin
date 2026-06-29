@@ -42,7 +42,7 @@ public class XpExtension
         {
             return null;
         }
-        return catalogs.find( "xplibs" )
+        return catalogs.find( SettingsPlugin.CATALOG_NAME )
             .flatMap( catalog -> catalog.findVersion( "xp" ) )
             .map( version -> version.getRequiredVersion() )
             .orElse( null );
