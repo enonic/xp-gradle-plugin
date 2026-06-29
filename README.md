@@ -11,7 +11,7 @@ For Enonic XP 8.x, use version 4.0.0 or later.
 
 This repository provides three plugins:
 
-- **`com.enonic.xp.settings`** — registers the `xplibs` version catalog with Enonic XP dependencies.
+- **`com.enonic.xp.settings`** — registers the `xplibs` version catalog with Enonic XP dependencies. The XP version is taken from the `xp { version = "…" }` settings block, then the `xpVersion` Gradle property, falling back to a built-in default version.
 - **`com.enonic.xp.base`** — base plugin for library and application development (Enonic repositories, the `xp {}` extension, Java toolchain).
 - **`com.enonic.xp.app`** — builds Enonic XP application jar files (automatically applies the base plugin).
 
@@ -32,7 +32,7 @@ pluginManagement {
 }
 
 plugins {
-    id("com.enonic.xp.settings") version "4.0.0-SNAPSHOT"
+    id("com.enonic.xp.settings") version "4.1.0-SNAPSHOT"
 }
 ```
 
