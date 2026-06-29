@@ -17,6 +17,7 @@ dependencies {
     testImplementation(libs.junit.jupiter)
     testRuntimeOnly(libs.junit.launcher)
     testImplementation(libs.mockito.jupiter)
+    testImplementation(gradleTestKit())
 }
 
 java {
