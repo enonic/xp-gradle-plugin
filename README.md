@@ -32,7 +32,7 @@ pluginManagement {
 }
 
 plugins {
-    id("com.enonic.xp.settings") version "4.0.0-SNAPSHOT"
+    id("com.enonic.xp.settings") version "4.1.0-SNAPSHOT"
 }
 ```
 

@@ -16,7 +16,7 @@ Apply the plugin in your `settings.gradle` file:
 [source,groovy]
 ----
 plugins {
-  id 'com.enonic.xp.settings' version '4.0.0'
+  id 'com.enonic.xp.settings' version '4.1.0'
 }
 ----
 
