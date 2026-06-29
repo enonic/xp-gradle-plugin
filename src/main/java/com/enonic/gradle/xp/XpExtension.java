@@ -3,6 +3,7 @@ package com.enonic.gradle.xp;
 import java.io.File;
 
 import org.gradle.api.Project;
+import org.gradle.api.artifacts.VersionCatalogsExtension;
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.model.ObjectFactory;
@@ -21,7 +22,9 @@ public class XpExtension
         this.project = project;
         final ObjectFactory objects = project.getObjects();
         this.version = objects.property( String.class );
-        this.version.convention( project.getProviders().gradleProperty( "xpVersion" ) );
+        this.version.convention( project.provider(
+            () -> XpVersionResolver.resolveVersion( xplibsCatalogVersion( project ),
+                                                    project.getProviders().gradleProperty( "xpVersion" ).getOrNull() ) ) );
 
         this.homeDir = objects.directoryProperty();
         this.homeDir.convention( project.getProviders()
@@ -30,6 +33,19 @@ public class XpExtension
                                      .orElse( project.getProviders().environmentVariable( "XP_HOME" ) )
                                      .map( path -> objects.directoryProperty().fileValue( new File( path ) ).get() )
                                      .orElse( project.getLayout().getBuildDirectory().dir( "xp/home" ) ) );
+    }
+
+    private static String xplibsCatalogVersion( final Project project )
+    {
+        final VersionCatalogsExtension catalogs = project.getExtensions().findByType( VersionCatalogsExtension.class );
+        if ( catalogs == null )
+        {
+            return null;
+        }
+        return catalogs.find( SettingsPlugin.CATALOG_NAME )
+            .flatMap( catalog -> catalog.findVersion( "xp" ) )
+            .map( version -> version.getRequiredVersion() )
+            .orElse( null );
     }
 
     public Property<String> getVersion()

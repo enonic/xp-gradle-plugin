@@ -70,11 +70,6 @@ public final class AppPlugin
     private XpVersion getXpVersion()
     {
         final String version = appExt.getSystemVersion().map( String::trim ).orElse( "" ).get();
-        if ( version.isEmpty() )
-        {
-            throw new IllegalArgumentException(
-                "XP system version not specified. Please set xpVersion in gradle.properties or configure app { systemVersion = \"...\" }" );
-        }
         final XpVersion xpVersion = XpVersion.parse( version );
         if ( !xpVersion.valid )
         {

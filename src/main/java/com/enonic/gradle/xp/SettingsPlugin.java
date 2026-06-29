@@ -2,7 +2,6 @@ package com.enonic.gradle.xp;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.initialization.Settings;
-import org.gradle.api.provider.Provider;
 
 public final class SettingsPlugin
     implements Plugin<Settings>
@@ -22,12 +21,15 @@ public final class SettingsPlugin
     @Override
     public void apply( final Settings settings )
     {
-        final Provider<String> xpVersion = settings.getProviders().gradleProperty( "xpVersion" );
-        if ( xpVersion.isPresent() )
-        {
-            settings.dependencyResolutionManagement( drm -> drm.versionCatalogs( container -> {
+        final XpSettingsExtension ext = settings.getExtensions().create( "xp", XpSettingsExtension.class );
+
+        settings.getGradle().settingsEvaluated( evaluated -> {
+            final String version = XpVersionResolver.resolveVersion( ext.getVersion().getOrNull(),
+                                                                     evaluated.getProviders().gradleProperty( "xpVersion" ).getOrNull() );
+
+            evaluated.dependencyResolutionManagement( drm -> drm.versionCatalogs( container -> {
                 container.create( CATALOG_NAME, catalog -> {
-                    catalog.version( "xp", xpVersion.get() );
+                    catalog.version( "xp", version );
                     for ( final String api : XP_APIS )
                     {
                         final String alias = "api-" + api.substring( 0, api.indexOf( '-' ) );
@@ -40,6 +42,6 @@ public final class SettingsPlugin
                     }
                 } );
             } ) );
-        }
+        } );
     }
 }
