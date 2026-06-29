@@ -4,6 +4,7 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
+import org.gradle.api.tasks.bundling.AbstractArchiveTask;
 import org.gradle.jvm.toolchain.JavaLanguageVersion;
 
 public final class BasePlugin
@@ -18,5 +19,7 @@ public final class BasePlugin
             final JavaPluginExtension javaExt = project.getExtensions().getByType( JavaPluginExtension.class );
             javaExt.getToolchain().getLanguageVersion().convention( JavaLanguageVersion.of( 25 ) );
         } );
+
+        project.getTasks().withType( AbstractArchiveTask.class ).configureEach( task -> task.setPreserveFileTimestamps( true ) );
     }
 }
