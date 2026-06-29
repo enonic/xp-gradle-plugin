@@ -22,12 +22,27 @@ plugins {
 
 === Usage
 
-Define `xpVersion` in `gradle.properties`:
+Set the XP version (optional, defaults to `8.0.2`) either in `settings.gradle`:
+
+[source,groovy]
+----
+plugins {
+  id 'com.enonic.xp.settings' version '4.1.0'
+}
+
+xp {
+  version = '8.5.0'
+}
+----
+
+or via `gradle.properties`:
 
 [source,properties]
 ----
-xpVersion = 8.0.0
+xpVersion = 8.5.0
 ----
+
+The settings block takes precedence over the Gradle property; if neither is set, `8.0.2` is used.
 
 The plugin creates a `xplibs` version catalog with Enonic XP dependencies.
 
