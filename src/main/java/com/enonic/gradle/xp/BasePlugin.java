@@ -21,5 +21,7 @@ public final class BasePlugin
         } );
 
         project.getTasks().withType( AbstractArchiveTask.class ).configureEach( task -> task.setPreserveFileTimestamps( true ) );
+
+        ScriptEngineTests.configure( project );
     }
 }

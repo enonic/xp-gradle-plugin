@@ -40,6 +40,8 @@ public final class SettingsPlugin
                         final String alias = lib.substring( 4 );
                         catalog.library( alias, XP_GROUP, lib ).versionRef( "xp" );
                     }
+                    // the script test harness, so builds stop spelling out the coordinate and its version
+                    catalog.library( "testing", XP_GROUP, "testing" ).versionRef( "xp" );
                 } );
             } ) );
         } );

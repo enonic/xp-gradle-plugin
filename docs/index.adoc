@@ -90,6 +90,7 @@ The base plugin creates the `xp {}` extension:
 xp {
     version = "8.5.0" // optional; overrides the resolved XP version (the `xplibs` catalog, then `xpVersion` property, then a built-in default)
     homeDir = file("/path/to/xp/home")  // in case you need to override XP home directory
+    scriptEngines = ['Nashorn']         // optional; overrides which script engines the tests run on
 }
 ----
 
@@ -104,7 +105,35 @@ xp {
 | `homeDir`
 | `xpHome` gradle property, `xp.home` system property, `XP_HOME` env variable, or `${buildDir}/xp/home`
 | XP home directory
+
+| `scriptEngines`
+| every supported engine for a library; the engine declared in `app { scriptEngine }` for an application
+| the script engines the tests run on
 |===
+
+==== Script engine tests
+
+A library is required by applications running on any script engine, so its tests run on all of them:
+`test` uses the first engine and each remaining one gets a task of its own, such as `testGraalJS`,
+all reachable from `check`.
+
+An application runs on the single engine it declares in `app { scriptEngine }`, so its tests run on
+that engine alone. That is the same value that becomes the application's `X-Script-Engine` manifest
+header, so what is tested cannot drift from what is deployed. An application that declares no engine
+is left alone, and its tests follow whatever the XP version it builds against defaults to.
+
+Every task names its engine explicitly rather than letting `test` inherit the platform default. Were
+it to inherit, the day XP changes its default every task would run the new default and coverage of
+the other engine would disappear without any test failing.
+
+Override this with `scriptEngines`, for instance in a library that genuinely supports one engine:
+
+[source,groovy]
+----
+xp {
+    scriptEngines = ['Nashorn']
+}
+----
 
 === Usage
 
