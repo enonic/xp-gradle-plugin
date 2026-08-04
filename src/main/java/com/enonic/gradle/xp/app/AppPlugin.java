@@ -1,5 +1,6 @@
 package com.enonic.gradle.xp.app;
 
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -37,6 +38,12 @@ public final class AppPlugin
         this.ext = XpExtension.get( this.project );
         this.appExt = AppExtension.create( this.project );
         this.appExt.getSystemVersion().convention( this.ext.getVersion() );
+
+        // An application runs on exactly one engine, so it is tested on exactly that one — the same
+        // value that becomes its X-Script-Engine header. Left unset it stays empty rather than
+        // guessing, which keeps `test` on whatever the XP version being built against defaults to.
+        this.ext.getScriptEngines()
+            .convention( this.appExt.getScriptEngine().map( List::of ).orElse( List.of() ) );
 
         this.project.afterEvaluate( this::afterEvaluate );
 

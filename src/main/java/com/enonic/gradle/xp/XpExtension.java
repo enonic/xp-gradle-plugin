@@ -1,21 +1,33 @@
 package com.enonic.gradle.xp;
 
 import java.io.File;
+import java.util.List;
 
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.VersionCatalogsExtension;
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.model.ObjectFactory;
+import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 
 public class XpExtension
 {
+    /**
+     * What a project is tested on when it declares nothing. Only Nashorn: it is the engine every
+     * supported XP version can run, so this default never asks for one the version being built
+     * against cannot provide. A project that also wants GraalJS coverage opts in through
+     * {@code xp.scriptEngines}, and does so against an XP version whose testing framework ships it.
+     */
+    private static final List<String> DEFAULT_SCRIPT_ENGINES = List.of( "Nashorn" );
+
     private final Project project;
 
     private final Property<String> version;
 
     private final DirectoryProperty homeDir;
+
+    private final ListProperty<String> scriptEngines;
 
     public XpExtension( final Project project )
     {
@@ -33,6 +45,9 @@ public class XpExtension
                                      .orElse( project.getProviders().environmentVariable( "XP_HOME" ) )
                                      .map( path -> objects.directoryProperty().fileValue( new File( path ) ).get() )
                                      .orElse( project.getLayout().getBuildDirectory().dir( "xp/home" ) ) );
+
+        this.scriptEngines = objects.listProperty( String.class );
+        this.scriptEngines.convention( DEFAULT_SCRIPT_ENGINES );
     }
 
     private static String xplibsCatalogVersion( final Project project )
@@ -66,6 +81,24 @@ public class XpExtension
     public void setHomeDir( final File dir )
     {
         this.homeDir.set( dir );
+    }
+
+    /**
+     * The script engines the tests of this project run on, in order: the first is the one the
+     * {@code test} task uses, and every other one gets a task of its own. Defaults to Nashorn
+     * alone; add GraalJS to also generate a {@code testGraalJS} task, but only against an XP version
+     * whose testing framework ships GraalJS. An application narrows this to the single engine it
+     * declares; an empty list leaves {@code test} alone, so it follows the default of the XP version
+     * being built against.
+     */
+    public ListProperty<String> getScriptEngines()
+    {
+        return this.scriptEngines;
+    }
+
+    public void setScriptEngines( final List<String> scriptEngines )
+    {
+        this.scriptEngines.set( scriptEngines );
     }
 
     public static XpExtension get( final Project project )
