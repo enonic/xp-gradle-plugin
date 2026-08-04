@@ -587,6 +587,7 @@ xp {
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">xp {
     version = "8.5.0" // optional; overrides the resolved XP version (the `xplibs` catalog, then `xpVersion` property, then a built-in default)
     homeDir = file("/path/to/xp/home")  // in case you need to override XP home directory
+    scriptEngines = ['Nashorn']         // optional; overrides which script engines the tests run on
 }</code></pre>
 </div>
 </div>
@@ -614,8 +615,42 @@ xp {
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>xpHome</code> gradle property, <code>xp.home</code> system property, <code>XP_HOME</code> env variable, or <code>${buildDir}/xp/home</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">XP home directory</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>scriptEngines</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">every supported engine for a library; the engine declared in <code>app { scriptEngine }</code> for an application</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the script engines the tests run on</p></td>
+</tr>
 </tbody>
 </table>
+<div class="sect3">
+<h4 id="script_engine_tests"><a class="link" href="#script_engine_tests">Script engine tests</a></h4>
+<div class="paragraph">
+<p>A library is required by applications running on any script engine, so its tests run on all of them:
+<code>test</code> uses the first engine and each remaining one gets a task of its own, such as <code>testGraalJS</code>,
+all reachable from <code>check</code>.</p>
+</div>
+<div class="paragraph">
+<p>An application runs on the single engine it declares in <code>app { scriptEngine }</code>, so its tests run on
+that engine alone. That is the same value that becomes the application&#8217;s <code>X-Script-Engine</code> manifest
+header, so what is tested cannot drift from what is deployed. An application that declares no engine
+is left alone, and its tests follow whatever the XP version it builds against defaults to.</p>
+</div>
+<div class="paragraph">
+<p>Every task names its engine explicitly rather than letting <code>test</code> inherit the platform default. Were
+it to inherit, the day XP changes its default every task would run the new default and coverage of
+the other engine would disappear without any test failing.</p>
+</div>
+<div class="paragraph">
+<p>Override this with <code>scriptEngines</code>, for instance in a library that genuinely supports one engine:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">xp {
+    scriptEngines = ['Nashorn']
+}</code></pre>
+</div>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="usage_2"><a class="link" href="#usage_2">Usage</a></h3>
@@ -829,7 +864,7 @@ You can control it with <code>app.keepArchiveFileName</code> setting.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-08-03 13:05:35 UTC
+Last updated 2026-08-04 04:32:41 UTC
 </div>
 </div>
 </body>
