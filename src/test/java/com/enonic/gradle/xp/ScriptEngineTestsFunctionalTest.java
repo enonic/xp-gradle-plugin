@@ -66,16 +66,29 @@ class ScriptEngineTestsFunctionalTest
     }
 
     @Test
-    void aLibraryIsTestedOnEveryEngine()
+    void aLibraryIsTestedOnNashornByDefault()
         throws IOException
     {
         final String output = build( "    id 'java'\n    id 'com.enonic.xp.base'\n", "" );
+
+        // only the engine every supported XP version can run: nothing that a version being built
+        // against might not provide is asked for unless the project opts in
+        assertTrue( output.contains( "TASK=test engine=Nashorn" ), output );
+        assertFalse( output.contains( "TASK=testGraalJS" ), output );
+    }
+
+    @Test
+    void aProjectCanOptIntoAnotherEngine()
+        throws IOException
+    {
+        final String output =
+            build( "    id 'java'\n    id 'com.enonic.xp.base'\n", "xp { scriptEngines = ['Nashorn', 'GraalJS'] }\n" );
 
         // the task name follows the engine name, so GraalJS gives testGraalJS
         assertTrue( output.contains( "TASK=test engine=Nashorn" ), output );
         assertTrue( output.contains( "TASK=testGraalJS engine=GraalJS" ), output );
 
-        // and it has to be reachable from check, or a library would never run the second engine
+        // and it has to be reachable from check, or the extra engine would never run
         assertTrue( output.lines().anyMatch( line -> line.startsWith( "CHECK=" ) && line.contains( "testGraalJS" ) ), output );
     }
 
@@ -103,21 +116,12 @@ class ScriptEngineTestsFunctionalTest
     }
 
     @Test
-    void aProjectCanNarrowTheMatrixItself()
-        throws IOException
-    {
-        final String output = build( "    id 'java'\n    id 'com.enonic.xp.base'\n", "xp { scriptEngines = ['Nashorn'] }\n" );
-
-        assertTrue( output.contains( "TASK=test engine=Nashorn" ), output );
-        assertFalse( output.contains( "TASK=testGraalJS" ), output );
-    }
-
-    @Test
     void engineTasksRunTheSameTestsAsTheTestTask()
         throws IOException
     {
         writeFile( "settings.gradle", "plugins { id 'com.enonic.xp.settings' }\nrootProject.name = 'probe'\n" );
         writeFile( "build.gradle", "plugins {\n    id 'java'\n    id 'com.enonic.xp.base'\n}\n" + TOOLCHAIN +
+            "xp { scriptEngines = ['Nashorn', 'GraalJS'] }\n" +
             "tasks.register('compareClasspaths') {\n" +
             "    doLast {\n" +
             "        println 'SAME_DIRS=' + (tasks.testGraalJS.testClassesDirs.files == tasks.test.testClassesDirs.files)\n" +
